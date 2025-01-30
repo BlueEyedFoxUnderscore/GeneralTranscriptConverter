@@ -1,0 +1,104 @@
+{
+  "name": ["standard", "normal", "normnote"],
+
+  "order after mods": true,
+  "intent": false,
+  "indicators": false,
+  "structure states": true,
+  "additional symbols": true,
+
+  "structures": {
+    "disc": "d",
+    "pillar": "p",
+    "ball": "b",
+    "cube": "c",
+    "wall": "w",
+    "boulder": "o",
+    "wildcard": "s"
+  },
+
+  "modifiers": {
+    "straight": "S",
+    "kick": "K",
+    "uppercut": "U",
+    "ground": "G",
+    "parry": "P",
+    "hold": "H",
+    "flick": "F",
+    "explode": "E",
+    "guard": "g"
+  },
+
+  "numbers": {
+    "zero": "0",
+    "one": "1",
+    "two": "2",
+    "three": "3",
+    "four": "4",
+    "five": "5",
+    "six": "6",
+    "seven": "7",
+    "eight": "8",
+    "nine": "9"
+  },
+
+  "movement": {
+    "move": "m",
+    "dash": "D",
+    "jump": "J",
+    "turn left": "t",
+    "turn right": "t",
+    "u-turn": "u"
+  },
+
+  "flight": {
+    "bump start": "",
+    "bump end": "B",
+    "mount start": "",
+    "mount end": "M"
+  },
+
+  "shiftstones": {
+    "adamant stone": "",
+    "charge stone": "C",
+    "flow stone": "F",
+    "guard stone": "G",
+    "stubborn stone": "S",
+    "surge stone": "s",
+    "vigor stone": "",
+    "volatile stone": "V",
+    "delimiter": "/"
+  },
+
+  "cadence and clarity": {
+    "note": "!",
+    "pause": ".",
+    "wait": "_",
+    "space": " "
+  },
+
+  "states": {
+    "grounded start": "[",
+    "grounded end": "]",
+    "free start": "(",
+    "free end": ")",
+    "incoming start": "{",
+    "incoming end": "}",
+    "explosive start": "<",
+    "explosive end": ">",
+    "wildcard start": "|",
+    "wildcard end": "|"
+  },
+
+  "additional": {
+    "base pose": "=",
+    "run": "R",
+    "lock on": "^",
+    "arrow": " > ",
+    "swap start": "*",
+    "swap end": "*",
+    "repeat": "...",
+    "charge start": "**",
+    "charge end": "**"
+  }
+}

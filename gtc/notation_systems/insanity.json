@@ -1,0 +1,160 @@
+{
+  "name": ["insanity", "insanity extension"],
+
+  "order after mods": true,
+  "intent": false,
+  "positional indicators": true,
+  "structure states": true,
+  "additional symbols": true,
+
+  "structures": {
+    "disc": "d",
+    "pillar": "p",
+    "ball": "b",
+    "cube": "c",
+    "wall": "w",
+    "boulder": "o",
+    "wildcard": "s"
+  },
+
+  "modifiers": {
+    "straight": "S",
+    "kick": "K",
+    "uppercut": "U",
+    "ground": "G",
+    "parry": "P",
+    "hold": "H",
+    "flick": "F",
+    "explode": "E",
+    "guard": "g"
+  },
+
+  "numbers": {
+    "zero": "0",
+    "one": "1",
+    "two": "2",
+    "three": "3",
+    "four": "4",
+    "five": "5",
+    "six": "6",
+    "seven": "7",
+    "eight": "8",
+    "nine": "9"
+  },
+
+  "movement": {
+    "move": "m",
+    "dash": "D",
+    "jump": "J",
+    "turn left": "tl",
+    "turn right": "tr",
+    "turn degrees": "t<|NUMBER_INSERT_TOKEN|>",
+    "turn approximately": "t~<|NUMBER_INSERT_TOKEN|>",
+    "u-turn": "u"
+  },
+
+  "flight": {
+    "bump start": "",
+    "bump end": "B",
+    "mount start": "",
+    "mount end": "M"
+  },
+
+  "shiftstones": {
+    "adamant stone": "",
+    "charge stone": "C",
+    "flow stone": "F",
+    "guard stone": "G",
+    "stubborn stone": "S",
+    "surge stone": "s",
+    "vigor stone": "",
+    "volatile stone": "V",
+    "delimiter": "/"
+  },
+
+  "cadence and clarity": {
+    "note": "!",
+    "pause": ".",
+    "wait": "_",
+    "space": " "
+  },
+
+  "states": {
+    "grounded start": "[",
+    "grounded end": "]",
+    "free start": "(",
+    "free end": ")",
+    "incoming start": "{",
+    "incoming end": "}",
+    "explosive start": "<",
+    "explosive end": ">",
+    "volatile explosive start": "**<**",
+    "volatile explosive end": "**>**",
+    "wildcard start": "|",
+    "wildcard end": "|"
+  },
+
+  "positional indicators": {
+    "front": "f",
+    "behind": "b",
+    "left": "l",
+    "right": "r",
+    "up": "u",
+    "down": "d",
+    "side": "s",
+    "opponent": "o",
+    "self": "i",
+    "approximately": "~"
+  },
+
+  "additional": {
+    "base pose": "=",
+    "run": "R",
+    "lock on": "^",
+    "arrow": " > ",
+    "swap": "*<|SUMMON_INSERT_TOKEN|>*",
+    "repeat": "...",
+    "charge": "**<|SUMMON_INSERT_TOKEN|>**",
+    "positional indication": ";<|POSITIONAL_INDICATORS_INSERT_TOKEN|> ",
+    "hit": "h",
+    "ricochet": "h;R",
+    "fly": "A",
+    "land": "L"
+  },
+
+  "notes": {
+    "\"<|TEXT_INSERT_TOKEN|>\"": ["say \"<|TEXT_INSERT_TOKEN|>\"", "shout \"<|TEXT_INSERT_TOKEN|>\"", "yell \"<|TEXT_INSERT_TOKEN|>\"", "scream <|\"<|TEXT_INSERT_TOKEN|>\""],
+    "h": ["hit"],
+    "h;o": ["hit opponent", "hit your opponent"],
+    "h<|SUMMON_WITH_STATE_INSERT_TOKEN|>;R": ["ricochet"],
+    "h<|SUMMON_WITH_STATE_INSERT_TOKEN|>;<|SUMMON_WITH_STATE_INSERT_TOKEN_INSERT_TOKEN|>": ["hit <|STRUCTURE_INSERT_TOKEN|> with <|STRUCTURE_INSERT_TOKEN|>"],
+    "h<|SUMMON_WITH_STATE_INSERT_TOKEN|>;o": ["hit opponent with <|STRUCTURE_INSERT_TOKEN|>"],
+    "A": ["fly"],
+    "A;o": ["fly to opponent", "fly towards opponent", "bump to opponent", "bump towards opponent"],
+    "A;<|STRUCTURE_INSERT_TOKEN|>": ["fly to <|STRUCTURE_INSERT_TOKEN|>", "fly towards <|STRUCTURE_INSERT_TOKEN|>", "bump to <|STRUCTURE_INSERT_TOKEN|>", "bump towards <|STRUCTURE_INSERT_TOKEN|>"],
+    "<|MODIFIER_INSERT_TOKEN|>;A": ["while airborne", "perform while airborne", "do while airborne"],
+    "L": ["land", "land on the ground"],
+    "L;<|STRUCTURE_INSERT_TOKEN|>": ["land on <|STRUCTURE_INSERT_TOKEN|>"],
+    "a;<|POSITION_INDICATOR_INSERT_TOKEN|>": ["move arms <|POSITION_INDICATOR_INSERT_TOKEN|>"],
+    "a;;<|MODIFIER_INSERT_TOKEN|>": ["move arms in <|MODIFIER_INSERT_TOKEN|> pose", "move arms as <|MODIFIER_INSERT_TOKEN|>"],
+    "t<|DEGREE_INSERT_TOKEN|>": ["turn <|DEGREE_INSERT_TOKEN|> degrees"],
+    "t~<|DEGREE_INSERT_TOKEN|>": ["turn approximately <|DEGREE_INSERT_TOKEN|> degrees", "turn almost <|DEGREE_INSERT_TOKEN|> degrees", "turn circa <|DEGREE_INSERT_TOKEN|> degrees"],
+    "t<|DEGREE_INSERT_TOKEN|>L": ["turn <|DEGREE_INSERT_TOKEN|> degrees to the left", "turn <|DEGREE_INSERT_TOKEN|> left"],
+    "t<|DEGREE_INSERT_TOKEN|>R": ["turn <|DEGREE_INSERT_TOKEN|> degrees to the right", "turn <|DEGREE_INSERT_TOKEN|> right"],
+    "tL": ["turn 90 degrees left", "turn left", "turn 90 degrees to the left"],
+    "tR": ["turn 90 degrees right", "turn right", "turn 90 degrees to the right"],
+    ";f": ["forwards", "straight ahead"],
+    ";b": ["backwards"],
+    ";l": ["left"],
+    ";r": ["right"],
+    ";u": ["up"],
+    ";d": ["down"],
+    ";s": ["side", "put to side", "move to side"],
+    ";o": ["opponent"],
+    ";<|STRUCTURE_INSERT_TOKEN|>": ["to <|STRUCTURE_INSERT_TOKEN|>"],
+    ";|": ["in joystick position", "joystick", "joystick position", "in joystick"],
+    ";--": ["in handlebars position", "handlebars", "handlebars position", "in handlebars"],
+    ";:": ["in yeehaw position", "yeehaw", "yeehaw position", "in yeehaw"],
+    "<|STATE_PREFIX_INSERT_TOKEN|><|SUMMON_INSERT_TOKEN|>+<|STATE_SUFFIX_INSERT_TOKEN|>": ["any <|STATE_PREFIX_INSERT_TOKEN|> structure stronger than <|SUMMON_INSERT_TOKEN|>"]
+  }
+}

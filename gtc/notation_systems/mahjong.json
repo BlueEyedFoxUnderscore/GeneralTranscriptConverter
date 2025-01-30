@@ -1,0 +1,77 @@
+{
+  "name": ["mahjong", "tiles"],
+
+  "orderAfterMods": false,
+  "intent": false,
+  "indicators": false,
+  "structureStates": false,
+  "additionalSymbols": false,
+
+  "structures": {
+    "disc": "🀚",
+    "pillar": "🀑",
+    "ball": "🀙",
+    "cube": "🀆",
+    "wall": "🀫",
+    "boulder": "🀡",
+    "wildcard": "🀪"
+  },
+
+  "modifiers": {
+    "straight": "🀄︎",
+    "kick": "🀤",
+    "uppercut": "🀅",
+    "ground": "🀥",
+    "parry": "🀩",
+    "hold": "🀣",
+    "flick": "🀢",
+    "explode": "🀧",
+    "guard": "🀘"
+  },
+
+  "numbers": {
+    "zero": "🀐",
+    "one": "🀇",
+    "two": "🀈",
+    "three": "🀉",
+    "four": "🀉",
+    "five": "🀋",
+    "six": "🀌",
+    "seven": "🀍",
+    "eight": "🀎",
+    "nine": "🀏"
+  },
+
+  "movement": {
+    "move": "🀗",
+    "dash": "🀀",
+    "jump": "🀃",
+    "turnLeft": "🀂",
+    "turnRight": "🀂",
+    "uTurn": "🀁"
+  },
+
+  "flight": {
+    "bumpStart": "",
+    "bumpEnd": "🀒",
+    "mountStart": "",
+    "mountEnd": "🀓"
+  },
+
+  "shiftstones": {
+    "chargeStone": "🀟",
+    "flowStone": "🀛",
+    "guardStone": "🀘",
+    "stubbornStone": "🀕",
+    "surgeStone": "🀝",
+    "volatileStone": "🀔",
+    "delimiter": "🀠"
+  },
+
+  "cadenceAndClarity": {
+    "note": "🀞",
+    "pause": "🀦",
+    "wait": "🀨",
+    "space": " "
+  }
+}

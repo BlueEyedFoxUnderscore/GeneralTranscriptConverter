@@ -1,0 +1,104 @@
+{
+  "name": ["emoji", "emojinote"],
+
+  "order after mods": true,
+  "intent": false,
+  "indicators": false,
+  "structure states": true,
+  "additional symbols": true,
+
+  "structures": {
+    "disc": ":flying_disc:",
+    "pillar": ":pill:",
+    "ball": ":tennis:",
+    "cube": ":ice_cube:",
+    "wall": ":bricks:",
+    "boulder": ":rock:",
+    "wildcard": ":question:"
+  },
+
+  "modifiers": {
+    "straight": ":right_facing_fist:",
+    "kick": ":palm_down_hand:",
+    "uppercut": ":fist:",
+    "ground": ":thumbsdown:",
+    "parry": ":rightwards_pushing_hand:",
+    "hold": ":palm_up_hand:",
+    "flick": ":rightwards_hand:",
+    "explode": ":clap:",
+    "guard": ":palms_up_together:"
+  },
+
+  "numbers": {
+    "zero": ":zero:",
+    "one": ":one:",
+    "two": ":two:",
+    "three": ":three:",
+    "four": ":four:",
+    "five": ":five:",
+    "six": ":six:",
+    "seven": ":seven:",
+    "eight": ":eight:",
+    "nine": ":nine:"
+  },
+
+  "movement": {
+    "move": ":person_walking:",
+    "dash": ":dash:",
+    "jump": ":kangaroo:",
+    "turn left": ":arrow_right_hook:",
+    "turn right": ":leftwards_arrow_with_hook:",
+    "u-turn": ":arrow_heading_down:"
+  },
+
+  "flight": {
+    "bump start": "",
+    "bump end": ":airplane_small:",
+    "mount start": "",
+    "mount end": ":mountain_snow:"
+  },
+
+  "shiftstones": {
+    "adamant stone": ":purple_square:",
+    "charge stone": ":yellow_circle:",
+    "flow stone": ":large_blue_diamond:",
+    "guard stone": ":orange_circle:",
+    "stubborn stone": ":blue_circle:",
+    "surge stone": ":green_circle:",
+    "vigor stone": ":green_heart:",
+    "volatile stone": ":small_red_triangle_down:",
+    "delimiter": ":hash:"
+  },
+
+  "cadence and clarity": {
+    "note": ":exclamation:",
+    "pause": ":stopwatch:",
+    "wait": ":hourglass:",
+    "space": " "
+  },
+
+  "states": {
+    "grounded start": ":previous_track:",
+    "grounded end": ":next_track:",
+    "free start": ":rewind:",
+    "free end": ":fast_forward:",
+    "incoming start": ":arrow_double_down:",
+    "incoming end": ":arrow_double_up:",
+    "explosive start": ":arrow_backward:",
+    "explosive end": ":arrow_forward:",
+    "wildcard start": ":pause_button:",
+    "wildcard end": ":pause_button:"
+  },
+
+  "additional": {
+    "base pose": ":heavy_equals_sign:",
+    "run": ":person_running:",
+    "lock on": ":arrow_heading_up:",
+    "arrow": ":arrow_right:",
+    "swap start": ":eight_spoked_asterisk:",
+    "swap end": ":eight_spoked_asterisk:",
+    "repeat": ":repeat:",
+    "charge start": ":high_brightness:",
+    "charge end": ":high_brightness:"
+  }
+}

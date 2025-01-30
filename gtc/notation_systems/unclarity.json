@@ -1,0 +1,108 @@
+{
+  "name": ["unclarity", "unclari"],
+
+  "orderAfterMods": false,
+  "intent": true,
+  "indicators": false,
+  "structureStates": false,
+  "additionalSymbols": true,
+
+  "structures": {
+    "disc": "D",
+    "pillar": "P",
+    "ball": "B",
+    "cube": "C",
+    "wall": "W",
+    "boulder": "O",
+    "wildcard": "S"
+  },
+
+  "modifiers": {
+    "straight": "-",
+    "kick": "^",
+    "uppercut": "'",
+    "ground": "_",
+    "parry": "/",
+    "hold": "&",
+    "flick": "$",
+    "explode": "+",
+    "guard": "g"
+  },
+
+  "numbers": {
+    "zero": "0",
+    "one": "1",
+    "two": "2",
+    "three": "3",
+    "four": "4",
+    "five": "5",
+    "six": "6",
+    "seven": "7",
+    "eight": "8",
+    "nine": "9"
+  },
+
+  "movement": {
+    "move": "r**<|DEGREE_INSERT_TOKEN|>**",
+    "dash": "d",
+    "jump": "j",
+    "turnLeft": "**<|DEGREE_INSERT_TOKEN|><**",
+    "turnRight": "**<|DEGREE_INSERT_TOKEN|>>**",
+    "uTurn": "**180**"
+  },
+
+  "flight": {
+    "bumpStart": "(",
+    "bumpEnd": ")",
+    "mountStart": "{",
+    "mountEnd": "}",
+    "puppetStart": "[",
+    "puppetEnd": "]"
+  },
+
+  "shiftstones": {
+    "chargeStone": "c",
+    "flowStone": "",
+    "guardStone": "g",
+    "stubbornStone": "s",
+    "surgeStone": "z",
+    "volatileStone": "v",
+    "delimiter": "~"
+  },
+
+  "cadenceAndClarity": {
+    "note": "!",
+    "pause": ",",
+    "wait": ".",
+    "space": " "
+  },
+
+  "states": {
+    "groundedStart": "",
+    "groundedEnd": "",
+    "freeStart": "",
+    "freeEnd": "",
+    "incomingStart": "i",
+    "incomingEnd": "",
+    "explosiveStart": "",
+    "explosiveEnd": "",
+    "wildcardStart": "",
+    "wildcardEnd": ""
+  },
+
+  "additional": {
+    "lockOn": "**0**",
+    "swapStart": "*",
+    "swapEnd": "*",
+    "chargeStart": "c",
+    "chargeEnd": "",
+    "logicalOr": "\\",
+    "stasis": "@",
+    "land": "l",
+    "reverse": "%",
+    "joystick": "|",
+    "handlebars": "=",
+    "yeehaw": ":",
+    "rage": "#"
+  }
+}
