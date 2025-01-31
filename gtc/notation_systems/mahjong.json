@@ -1,11 +1,11 @@
 {
   "name": ["mahjong", "tiles"],
 
-  "orderAfterMods": false,
+  "order after mods": false,
   "intent": false,
-  "indicators": false,
-  "structureStates": false,
-  "additionalSymbols": false,
+  "positional indicators": false,
+  "structure states": false,
+  "additional symbols": false,
 
   "structures": {
     "disc": "🀚",
@@ -46,29 +46,29 @@
     "move": "🀗",
     "dash": "🀀",
     "jump": "🀃",
-    "turnLeft": "🀂",
-    "turnRight": "🀂",
-    "uTurn": "🀁"
+    "turn left": "🀂",
+    "turn right": "🀂",
+    "u-turn": "🀁"
   },
 
   "flight": {
-    "bumpStart": "",
-    "bumpEnd": "🀒",
-    "mountStart": "",
-    "mountEnd": "🀓"
+    "bump start": "",
+    "bump end": "🀒",
+    "mount start": "",
+    "mount end": "🀓"
   },
 
   "shiftstones": {
-    "chargeStone": "🀟",
-    "flowStone": "🀛",
-    "guardStone": "🀘",
-    "stubbornStone": "🀕",
-    "surgeStone": "🀝",
-    "volatileStone": "🀔",
+    "charge stone": "🀟",
+    "flow stone": "🀛",
+    "guard stone": "🀘",
+    "stubborn stone": "🀕",
+    "surge stone": "🀝",
+    "volatile stone": "🀔",
     "delimiter": "🀠"
   },
 
-  "cadenceAndClarity": {
+  "cadence and clarity": {
     "note": "🀞",
     "pause": "🀦",
     "wait": "🀨",

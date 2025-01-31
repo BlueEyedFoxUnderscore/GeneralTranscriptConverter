@@ -1,11 +1,10 @@
 {
   "name": ["unclarity", "unclari"],
 
-  "orderAfterMods": false,
+  "order after mods": false,
   "intent": true,
-  "indicators": false,
-  "structureStates": false,
-  "additionalSymbols": true,
+  "positional indicators": false,
+  "structure states": false,
 
   "structures": {
     "disc": "D",
@@ -46,31 +45,31 @@
     "move": "r**<|DEGREE_INSERT_TOKEN|>**",
     "dash": "d",
     "jump": "j",
-    "turnLeft": "**<|DEGREE_INSERT_TOKEN|><**",
-    "turnRight": "**<|DEGREE_INSERT_TOKEN|>>**",
-    "uTurn": "**180**"
+    "turn left": "**<|DEGREE_INSERT_TOKEN|><**",
+    "turn right": "**<|DEGREE_INSERT_TOKEN|>>**",
+    "u-turn": "**180**"
   },
 
   "flight": {
-    "bumpStart": "(",
-    "bumpEnd": ")",
-    "mountStart": "{",
-    "mountEnd": "}",
-    "puppetStart": "[",
-    "puppetEnd": "]"
+    "bump start": "(",
+    "bump end": ")",
+    "mount start": "{",
+    "mount end": "}",
+    "puppet start": "[",
+    "puppet end": "]"
   },
 
   "shiftstones": {
-    "chargeStone": "c",
-    "flowStone": "",
-    "guardStone": "g",
-    "stubbornStone": "s",
-    "surgeStone": "z",
-    "volatileStone": "v",
+    "charge stone": "c",
+    "flow stone": "",
+    "guard stone": "g",
+    "stubborn stone": "s",
+    "surge stone": "z",
+    "volatile stone": "v",
     "delimiter": "~"
   },
 
-  "cadenceAndClarity": {
+  "cadence and clarity": {
     "note": "!",
     "pause": ",",
     "wait": ".",
@@ -78,25 +77,25 @@
   },
 
   "states": {
-    "groundedStart": "",
-    "groundedEnd": "",
-    "freeStart": "",
-    "freeEnd": "",
-    "incomingStart": "i",
-    "incomingEnd": "",
-    "explosiveStart": "",
-    "explosiveEnd": "",
-    "wildcardStart": "",
-    "wildcardEnd": ""
+    "grounded start": "",
+    "grounded end": "",
+    "free start": "",
+    "free end": "",
+    "incoming start": "i",
+    "incoming end": "",
+    "explosive start": "",
+    "explosive end": "",
+    "wildcard start": "",
+    "wildcard end": ""
   },
 
   "additional": {
-    "lockOn": "**0**",
-    "swapStart": "*",
-    "swapEnd": "*",
-    "chargeStart": "c",
-    "chargeEnd": "",
-    "logicalOr": "\\",
+    "lock on": "**0**",
+    "swap start": "*",
+    "swap end": "*",
+    "charge start": "c",
+    "charge end": "",
+    "logical or": "\\",
     "stasis": "@",
     "land": "l",
     "reverse": "%",

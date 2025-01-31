@@ -3,9 +3,8 @@
 
   "order after mods": true,
   "intent": false,
-  "indicators": false,
+  "positional indicators": false,
   "structure states": true,
-  "additional symbols": true,
 
   "structures": {
     "disc": ":flying_disc:",

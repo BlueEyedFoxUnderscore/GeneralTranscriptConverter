@@ -4,7 +4,6 @@
 # There, you can just copy one of them and modify it to your heart's content.
 # Don't rename any keys. The script works by assigning the same key to different values.
 # Keys are the first words on each line, for the uninitiated.
-# Add custom keys in the "additional" object, so that they can be added post-translation.
 
 from os import listdir
 from os.path import join, dirname, abspath
@@ -163,7 +162,7 @@ def handle_invalid_key(key: str,
     key = str(key)
     if user_input == None:
         user_input = input(f'''
-    "{key}" doesn't have a value in the output system. How would you like to handle it?
+    "{key}" doesn't have a value in the print_function system. How would you like to handle it?
     (1) Remove it.
     (2) Change it.
     (3) Assign a value to it.
@@ -278,17 +277,17 @@ def create_insert_tokens(system: dict[str, Any],
 
 def translate(user_input: str,
               input_system: dict[str, Any],
-              output_system: dict[str, Any],
+              print_function_system: dict[str, Any],
               *, get_input: Optional[Callable[str, str]] = input,
-              output: Optional[Callable[str, None]] = print, 
-              output_error: Optional[Callable[str, None]] = stderr.write) -> str:
+              print_function: Optional[Callable[str, None]] = print, 
+              print_error: Optional[Callable[str, None]] = stderr.write) -> str:
     # TODO: fill in insanity.json
-    output_error = _validate_argument_function(output_error, stderr.write)
-    if type(input_system) != dict or type(output_system) != dict:
-        output_error("Invalid system input. Something isn't a python dictionary.\n")
+    print_error = _validate_argument_function(print_error, stderr.write)
+    if type(input_system) != dict or type(print_function_system) != dict:
+        print_error("Invalid system input. Something isn't a python dictionary.\n")
         return ""
-    get_input = _validate_argument_function(get_input, input, print_error = output_error)
-    output = _validate_argument_function(output, print, print_error = output_error)
+    get_input = _validate_argument_function(get_input, input, print_error = print_error)
+    print_function = _validate_argument_function(print_function, print, print_error = print_error)
     user_input = str(user_input)
     start_index = 0
     end_index = 1
@@ -312,7 +311,7 @@ def translate(user_input: str,
         return filtered_system
     processed_input = user_input
     processed_input_system = process_system(input_system)
-    processed_output_system = process_system(output_system)
+    processed_print_function_system = process_system(print_function_system)
     previous_instances_count = 0
     input_translated_to_keys = []
     def append_to_keys(key):
@@ -324,12 +323,12 @@ def translate(user_input: str,
     symbols_to_ignore = {}
     exit_signal = False
     input_system_bools = extract_bools(input_system)
-    output_system_bools = extract_bools(output_system)
+    print_function_system_bools = extract_bools(print_function_system)
     input_system_note_symbol = processed_input_system["cadence and clarity/note"]
     finished_notation = ""
     for line in processed_input.rstrip("\r\n").splitlines():
         if line == {processed_input_system["cadence and clarity/space"]}:
-            finished_notation += f"{processed_output_system["cadence and clarity/space"]}\n"
+            finished_notation += f"{processed_print_function_system["cadence and clarity/space"]}\n"
             continue
             # I genuinely have no idea why, but without this, lines with only a space are skipped.
         start_index = 0
@@ -339,7 +338,7 @@ def translate(user_input: str,
         symbols_to_notes = {}
         if line[:len(input_system_note_symbol)] == input_system_note_symbol and processed_input.rstrip("\r\n").splitlines().index(line) != 0:
             # TODO: add case for note to symbol
-            finished_notation += f"{processed_output_system["cadence and clarity/note"]}{line[len(input_system_note_symbol):]}\n"
+            finished_notation += f"{processed_print_function_system["cadence and clarity/note"]}{line[len(input_system_note_symbol):]}\n"
             continue
         else:
             shiftstoning = False
@@ -361,7 +360,7 @@ def translate(user_input: str,
                         if previous_instances_count > 1:
                             end_index -= 1
                             symbol = line[start_index:end_index]
-                            chosen_option = handle_doubled(symbol, find_key_by_value(filtered_input_system, symbol), print_function = output)
+                            chosen_option = handle_doubled(symbol, find_key_by_value(filtered_input_system, symbol), print_function = print_function)
                             match chosen_option:
                                 case "exit":
                                     exit_signal = True
@@ -374,12 +373,12 @@ def translate(user_input: str,
                                 case _:
                                     append_to_keys(chosen_option)
                             continue
-                        match handle_invalid_value(symbol, print_function = output):
+                        match handle_invalid_value(symbol, print_function = print_function):
                             case "exit":
                                 exit_signal = True
                                 break
                             case "remove":
-                                output("All instances? [N/y]")
+                                print_function("All instances? [N/y]")
                                 remove_all_instances_choice = get_input()
                                 if len(remove_all_instances_choice) == 0 or remove_all_instances_choice.lower()[0] != "y":
                                     line = line.replace(symbol, "", 1)
@@ -387,9 +386,9 @@ def translate(user_input: str,
                                     line = line.replace(symbol, "")
                                 end_index = start_index + 1
                             case "change":
-                                output(f"Replace {symbol} with:")
+                                print_function(f"Replace {symbol} with:")
                                 replacement_symbol = get_input()
-                                output("All instances? [N/y]")
+                                print_function("All instances? [N/y]")
                                 change_all_instances_choice = get_input()
                                 if len(change_all_instances_choice) == 0 or change_all_instances_choice.lower()[0] != "y":
                                     line = line.replace(symbol, replacement_symbol, 1)
@@ -398,20 +397,20 @@ def translate(user_input: str,
                                 end_index = start_index + 1
                             case "assign":
                                 all_parent_keys = [key for key, value in list(input_system.items()) if type(value) == dict]
-                                output(f"Insert the category of {symbol} ({", ".join(all_parent_keys)} or custom category)")
+                                print_function(f"Insert the category of {symbol} ({", ".join(all_parent_keys)} or custom category)")
                                 assigned_parent_key = get_input()
-                                output(f"Insert a key for {symbol}")
+                                print_function(f"Insert a key for {symbol}")
                                 assigned_child_key = get_input()
                                 assigned_full_key = f"{assigned_parent_key}/{assigned_child_key}"
                                 filtered_input_system.update({assigned_full_key: symbol})
                                 append_to_keys(assigned_full_key)
                             case "note":
-                                output("All instances? [n/Y]")
+                                print_function("All instances? [n/Y]")
                                 change_all_instances_choice = get_input()
-                                output("Type note contents.")
+                                print_function("Type note contents.")
                                 note_contents = get_input()
                                 if note_contents == "":
-                                    output("Invalid note.")
+                                    print_function("Invalid note.")
                                     continue
                                 if len(change_all_instances_choice) == 0 or change_all_instances_choice.lower()[0] != "n":
                                     symbols_to_notes.update({symbol: note_contents})
@@ -419,7 +418,7 @@ def translate(user_input: str,
                                 append_to_keys("cadence and clarity/note")
                             case "include":
                                 try:
-                                    output("Number of charaters to insert:")
+                                    print_function("Number of charaters to insert:")
                                     characters_to_insert = int(get_input())
                                     if characters_to_insert > len(line[end_index:]):
                                         characters_to_insert = len(line[end_index:])
@@ -427,11 +426,11 @@ def translate(user_input: str,
                                         characters_to_insert = -len(symbol) + 1
                                     end_index += characters_to_insert
                                 except:
-                                    output("Invalid number.")
+                                    print_function("Invalid number.")
                             case "ignore":
                                 randomized_key = "".join(sample("0123456789abcdefghijklmnopkrstuvwxyz", k=16))
                                 symbols_to_ignore.update({randomized_key: symbol})
-                                processed_output_system.update({randomized_key: symbol})
+                                processed_print_function_system.update({randomized_key: symbol})
                             case "invalid":
                                 pass
                         continue
@@ -478,19 +477,19 @@ def translate(user_input: str,
                 try:
                     if not previous_was_invalid:
                         key = input_translated_to_keys[translation_index]
-                    keys_translated_to_notation.append(processed_output_system[key])
+                    keys_translated_to_notation.append(processed_print_function_system[key])
                     translation_index += 1
                     previous_was_invalid = False
                 except:
                     if key in list(invalid_keys_to_notes.keys()):
                         notes.append(invalid_keys_to_notes[key])
-                        keys_translated_to_notation.append(processed_output_system["cadence and clarity/note"])
+                        keys_translated_to_notation.append(processed_print_function_system["cadence and clarity/note"])
                         translation_index += 1
                         continue
-                    output(f"Here is the currently translated portion of the notation:\n{"".join(keys_translated_to_notation)}")
-                    match handle_invalid_key(key, print_function = output):
+                    print_function(f"Here is the currently translated portion of the notation:\n{"".join(keys_translated_to_notation)}")
+                    match handle_invalid_key(key, print_function = print_function):
                         case "remove":
-                            output("All instances? [n/Y]")
+                            print_function("All instances? [n/Y]")
                             change_all_instances_choice = get_input()
                             if len(change_all_instances_choice) == 0 or change_all_instances_choice.lower()[0] != "n":
                                 input_translated_to_keys = [instance for instance in input_translated_to_keys if instance != key]
@@ -498,9 +497,9 @@ def translate(user_input: str,
                                 translation_index += 1
                         case "change":
                             previous_was_invalid = True
-                            output(f"Change {key} to:")
+                            print_function(f"Change {key} to:")
                             changed_key = get_input()
-                            output("All instances? [n/Y]")
+                            print_function("All instances? [n/Y]")
                             change_all_instances_choice = get_input()
                             if len(change_all_instances_choice) == 0 or change_all_instances_choice.lower()[0] != "n":
                                 input_translated_to_keys = [changed_key if x == key else x for x in input_translated_to_keys]
@@ -509,12 +508,12 @@ def translate(user_input: str,
                             else:
                                 key = changed_key
                         case "assign":
-                            output(f"Assign a value to {key}:")
-                            processed_output_system.update({key: get_input()})
+                            print_function(f"Assign a value to {key}:")
+                            processed_print_function_system.update({key: get_input()})
                         case "note":
-                            output("All instances? [n/Y]")
+                            print_function("All instances? [n/Y]")
                             change_all_instances_choice = get_input()
-                            output("Type note contents.\nTo fall back to key name, enter an empty note.")
+                            print_function("Type note contents.\nTo fall back to key name, enter an empty note.")
                             note_contents = get_input()
                             if note_contents == "":
                                 note_contents = key[key.find("/") + 1:]
@@ -530,15 +529,14 @@ def translate(user_input: str,
             if exit_signal:
                 break
             translated_notation = "".join(keys_translated_to_notation) + "\n"
-            if output_system["name"][0] == "text":
+            if print_function_system["name"][0] == "text":
                 is_in_listed_object = any(input_translated_to_keys[-1].startswith(obj) for obj in ["modifiers/", "states/"])
                 is_not_listed_symbol = any(input_translated_to_keys[-1] != element for element in ["cadence and clarity/note"])
                 if is_in_listed_object and is_not_listed_symbol:
                     translated_notation = translated_notation[:-2]
             finished_notation += translated_notation
             for note in notes:
-                finished_notation += f"{processed_output_system["cadence and clarity/note"]}{note}\n"
-            # TODO: code post-translation symbol insertion
+                finished_notation += f"{processed_print_function_system["cadence and clarity/note"]}{note}\n"
             continue
     if exit_signal:
         return ""
@@ -569,9 +567,9 @@ if __name__ == "__main__":
                 case "invalid":
                     continue
             print("To: ", end="")
-            output_system = input_valid_system([system for system in all_systems if system != input_system])
+            print_function_system = input_valid_system([system for system in all_systems if system != input_system])
             # Every system except input_system.
-            match output_system:
+            match print_function_system:
                 case "exit":
                     break
                 case "invalid":
@@ -596,10 +594,10 @@ If it asks you to sanitize the text, don't.\n\n""")
             if exit_signal == True:
                 break
             input_notation = "".join(input_notation).rstrip("\r\n")
-            match output_notation := translate(input_notation, input_system, output_system):
+            match print_function_notation := translate(input_notation, input_system, print_function_system):
                 case "":
-                    pass
+                    pass # Avoids an unnecessary newline after an empty print_function.
                 case _:
-                    print(output_notation)
+                    print(print_function_notation)
         except Exception as e:
             raise e
