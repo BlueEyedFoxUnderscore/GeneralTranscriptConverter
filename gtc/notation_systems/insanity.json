@@ -68,7 +68,11 @@
     "surge stone": "s",
     "vigor stone": "",
     "volatile stone": "V",
-    "delimiter": "/"
+    "delimiter": "/",
+    "host": "h@",
+    "client": "c@",
+    "host start": "h@ ",
+    "client start": "c@ "
   },
 
   "cadence and clarity": {
@@ -103,6 +107,7 @@
     "side": "s",
     "opponent": "o",
     "self": "i",
+    "howard": "[howard]",
     "approximately": "~"
   },
 
@@ -118,7 +123,14 @@
     "hit": "h",
     "ricochet": "h;R",
     "fly": "A",
-    "land": "L"
+    "land": "L",
+    "bloodbend": "&",
+    "explosive ricochet": "e<|SUMMON_INSERT_TOKEN|>;<|POSITIONAL_INDICATORS_INSERT_TOKEN|>",
+    "mod or mod": "<|MODIFIER_INSERT_TOKEN|>\\<|MODIFIER_INSERT_TOKEN|>",
+    "mod or notation": "<|MODIFIER_INSERT_TOKEN\\ <|NOTATION_INSERT_TOKEN|> > ",
+    "notation or mod": " > <|NOTATION_INSERT_TOKEN|> \\<|MODIFIER_INSERT_TOKEN|>",
+    "notation or notation": " > <|NOTATION_INSERT_TOKEN|> \\ <|NOTATION_INSERT_TOKEN|> > ",
+    "named move": "'<|TEXT_INSERT_TOKEN|>'"
   },
 
   "notes": {
@@ -126,15 +138,16 @@
     "h": ["hit"],
     "h;o": ["hit opponent", "hit your opponent"],
     "h<|SUMMON_WITH_STATE_INSERT_TOKEN|>;R": ["ricochet"],
-    "h<|SUMMON_WITH_STATE_INSERT_TOKEN|>;<|SUMMON_WITH_STATE_INSERT_TOKEN_INSERT_TOKEN|>": ["hit <|STRUCTURE_INSERT_TOKEN|> with <|STRUCTURE_INSERT_TOKEN|>"],
+    "h<|SUMMON_WITH_STATE_INSERT_TOKEN|>;<|SUMMON_WITH_STATE_INSERT_TOKEN|>": ["hit <|STRUCTURE_INSERT_TOKEN|> with <|STRUCTURE_INSERT_TOKEN|>"],
     "h<|SUMMON_WITH_STATE_INSERT_TOKEN|>;o": ["hit opponent with <|STRUCTURE_INSERT_TOKEN|>"],
     "A": ["fly"],
     "A;o": ["fly to opponent", "fly towards opponent", "bump to opponent", "bump towards opponent"],
     "A;<|STRUCTURE_INSERT_TOKEN|>": ["fly to <|STRUCTURE_INSERT_TOKEN|>", "fly towards <|STRUCTURE_INSERT_TOKEN|>", "bump to <|STRUCTURE_INSERT_TOKEN|>", "bump towards <|STRUCTURE_INSERT_TOKEN|>"],
+    "A;<|POSITIONAL_INDICATORS_INSERT_TOKEN|>": ["fly <|POSITIONAL_INDICATORS_INSERT_TOKEN|>"],
     "<|MODIFIER_INSERT_TOKEN|>;A": ["while airborne", "perform while airborne", "do while airborne"],
     "L": ["land", "land on the ground"],
     "L;<|STRUCTURE_INSERT_TOKEN|>": ["land on <|STRUCTURE_INSERT_TOKEN|>"],
-    "a;<|POSITION_INDICATOR_INSERT_TOKEN|>": ["move arms <|POSITION_INDICATOR_INSERT_TOKEN|>"],
+    "a;<|POSITIONAL_INDICATORS_INSERT_TOKEN|>": ["move arms <|POSITION_INDICATORS_INSERT_TOKEN|>"],
     "a;;<|MODIFIER_INSERT_TOKEN|>": ["move arms in <|MODIFIER_INSERT_TOKEN|> pose", "move arms as <|MODIFIER_INSERT_TOKEN|>"],
     "t<|DEGREE_INSERT_TOKEN|>": ["turn <|DEGREE_INSERT_TOKEN|> degrees"],
     "t~<|DEGREE_INSERT_TOKEN|>": ["turn approximately <|DEGREE_INSERT_TOKEN|> degrees", "turn almost <|DEGREE_INSERT_TOKEN|> degrees", "turn circa <|DEGREE_INSERT_TOKEN|> degrees"],
@@ -146,14 +159,24 @@
     ";b": ["backwards"],
     ";l": ["left"],
     ";r": ["right"],
-    ";u": ["up"],
-    ";d": ["down"],
+    ";u": ["up", "above"],
+    ";d": ["down", "under"],
     ";s": ["side", "put to side", "move to side"],
     ";o": ["opponent"],
-    ";<|STRUCTURE_INSERT_TOKEN|>": ["to <|STRUCTURE_INSERT_TOKEN|>"],
+    ";i": ["self"],
+    ";<|SUMMON_WITH_STATE_INSERT_TOKEN|>": ["to <|SUMMON_WITH_STATE_INSERT_TOKEN|>"],
+    "~<|POSITIONAL_INDICATORS_INSERT_TOKEN|>": ["approximately <|POSITIONAL_INDICATORS_INSERT_TOKEN|>"],
     ";|": ["in joystick position", "joystick", "joystick position", "in joystick"],
     ";--": ["in handlebars position", "handlebars", "handlebars position", "in handlebars"],
     ";:": ["in yeehaw position", "yeehaw", "yeehaw position", "in yeehaw"],
-    "<|STATE_PREFIX_INSERT_TOKEN|><|SUMMON_INSERT_TOKEN|>+<|STATE_SUFFIX_INSERT_TOKEN|>": ["any <|STATE_PREFIX_INSERT_TOKEN|> structure stronger than <|SUMMON_INSERT_TOKEN|>"]
+    "<|STATE_PREFIX_INSERT_TOKEN|><|SUMMON_INSERT_TOKEN|>+<|STATE_SUFFIX_INSERT_TOKEN|>": ["any <|STATE_PREFIX_INSERT_TOKEN|> structure stronger than <|SUMMON_INSERT_TOKEN|>"],
+    "<|SUMMON_INSERT_TOKEN|>;f": ["flat <|SUMMON_INSERT_TOKEN|>"],
+    "<|SUMMON_INSERT_TOKEN|>;S": ["sideways <|SUMMON_INSERT_TOKEN|>"],
+    "<|SUMMON_INSERT_TOKEN|>;fS": ["flat and sideways <|SUMMON_INSERT_TOKEN|>"],
+    "<|SUMMON_INSERT_TOKEN|>;H": ["held <|SUMMON_INSERT_TOKEN|>"],
+    "<|SUMMON_INSERT_TOKEN|>;F": ["flicked <|SUMMON_INSERT_TOKEN|>"],
+    "{<|NOTATION_INSERT_TOKEN|>}": ["opponent does <|NOTATION_INSERT_TOKEN|>", "enemy does <|NOTATION_INSERT_TOKEN|>", "opponent performs <|NOTATION_INSERT_TOKEN|>", "enemy performs <|NOTATION_INSERT_TOKEN|>"],
+    "***^***": ["in line of sight", "line of sight"],
+    "&": ["bloodbend opponent", "bloodbend"]
   }
 }

@@ -87,25 +87,26 @@ def input_valid_system(systems: list[dict[str, Any]],
         if found_system:
             return found_system
         else:
-            print_error("\nInvalid system.\n")
             return "invalid"
     except Exception as e:
         print_error(f"Error validating system: {e}\n")
 
-def handle_invalid_value(symbol: str,
-                         user_input: Optional[str] = None,
-                         *, print_function: Optional[Callable[str, None]] = print) -> str:
-    print_function = _validate_argument_function(print_function, print)
+def handle_invalid_value(*, symbol: str,
+                         user_input: Optional[Union[str, Callable[None, str]]] = None,
+                         ) -> str:
     symbol = str(symbol)
     if user_input == None:
-        user_input = input(f'''
+        print(f'''
     "{symbol}" is not a valid value in the input system. How would you like to handle it?
     (1) Remove it.
     (2) Change it.
     (3) Assign it (will replace existing value of the key).
     (4) Turn it into a note.
     (5) Include the next # characters and ask again.
-    (6) Ignore it.\n\n    > ''')
+    (6) Ignore it.''')
+        user_input = input()
+    if callable(user_input):
+        user_input = user_input()
     user_input = str(user_input)
     if user_input in quit_words:
         return "exit"
@@ -123,25 +124,26 @@ def handle_invalid_value(symbol: str,
         case "6":
             return "ignore"
         case _:
-            print_function("\nInvalid option.\n")
             return "invalid"
         # Man I love pattern matching.
 
-def handle_doubled(symbol: str,
+def handle_doubled(*, symbol: str,
                    keys: list[str],
-                   user_input: Optional[str] = None,
-                   *, print_function: Optional[Callable[str, None]] = print) -> str:
-    print_function = _validate_argument_function(print_function, print)
+                   user_input: Optional[Union[str, Callable[None, str]]] = None,
+                   ) -> str:
     options = ""
     for key in keys:
         options += f"({keys.index(key) + 1}) {key}\n    "
     symbol = str(symbol)
     if user_input == None:
-        user_input = input(f'''
+        print(f'''
     "{symbol}" belongs to multiple keys.
     Which one would you like to insert?
     (0) None (will handle "{symbol}" as an invalid value)
-    {options}\n    > ''')
+    {options}''')
+        user_input = input()
+    if callable(user_input):
+        user_input = user_input()
     user_input = str(user_input)
     if user_input in quit_words:
         return "exit"
@@ -152,21 +154,22 @@ def handle_doubled(symbol: str,
             case _:
                 return keys[abs(int(user_input)) - 1]
     except:
-        print_function("\nInvalid option.\n")
         return "invalid"
 
-def handle_invalid_key(key: str,
-                       user_input: Optional[str] = None,
-                       *, print_function: Optional[Callable[str, None]] = print) -> str:
-    print_function = _validate_argument_function(print_function, print)
+def handle_invalid_key(*, key: str,
+                       user_input: Optional[Union[str, Callable[None, str]]] = None,
+                       ) -> str:
     key = str(key)
     if user_input == None:
-        user_input = input(f'''
+        print(f'''
     "{key}" doesn't have a value in the print_function system. How would you like to handle it?
     (1) Remove it.
     (2) Change it.
     (3) Assign a value to it.
-    (4) Turn it into a note.\n\n    > ''')
+    (4) Turn it into a note.''')
+        user_input = input()
+    if callable(user_input):
+        user_input = user_input()
     user_input = str(user_input)
     if user_input in quit_words:
         return "exit"
@@ -180,7 +183,6 @@ def handle_invalid_key(key: str,
         case "4":
             return "note"
         case _:
-            print_function("\nInvalid option.\n")
             return "invalid"
 
 def process_system(system: dict[str, Any],
@@ -247,7 +249,7 @@ def create_insert_tokens(system: dict[str, Any],
             "<|SHIFTSTONE_INSERT_TOKEN|>": f"([{all_shiftstones}])",
             "<|NOTATION_INSERT_TOKEN|>": f"([{all_values}]+)"
         }
-        if system["structureStates"]:
+        if system["structure states"]:
             structure_with_state = f"([{values_of["structures"]}]"
             summon_with_state = f"([{values_of["structures"]}]|[{values_of["structures"]}][{values_of["numbers"]}]+|[{values_of["numbers"]}]+"
             state_begins = [system["states"][x] for x in system["states"] if x[-5:] == "Start"]
@@ -269,22 +271,39 @@ def create_insert_tokens(system: dict[str, Any],
                            "<|SUMMON_WITH_STATE_INSERT_TOKEN|>": f"{summon_with_state}",
                            "<|STATE_PREFIX_INSERT_TOKEN|>": f"{escaped_open_state}",
                            "<|STATE_SUFFIX_INSERT_TOKEN|>": f"{escaped_close_state}"})
-        if "positionalIndicators" in system.keys():
-            tokens.update({"<|POSITIONAL_INDICATORS_INSERT_TOKEN|>": f"([{"".join(system["positionalIndicators"].values())}]+)"})
+        if "positional indicators" in system.keys():
+            tokens.update({"<|POSITIONAL_INDICATORS_INSERT_TOKEN|>": f"([{"".join(system["positional indicators"].values())}]+)"})
         return tokens
     except Exception as e:
         raise e
+
+class DoubledValueArgs(TypedDict):
+    arg1: str
+    arg2: List[str]
+    arg3: Optional[Union[str, Callable[None, str]]]
+
+class InvalidValueKeysArgs(TypedDict):
+    arg1: str
+    arg2: Optional[Union[str, Callable[None, str]]]
 
 def translate(user_input: str,
               input_system: dict[str, Any],
               output_system: dict[str, Any],
               *, get_input: Optional[Callable[str, str]] = input,
               print_function: Optional[Callable[str, None]] = print, 
-              print_error: Optional[Callable[str, None]] = stderr.write) -> str:
+              print_error: Optional[Callable[str, None]] = stderr.write,
+              invalid_value_handling: Optional[Callable[InvalidValueKeysArgs, str]] = handle_invalid_value,
+              doubled_value_handling: Optional[Callable[DoubledValueArgs, str]] = handle_doubled,
+              invalid_key_handling: Optional[Callable[InvalidValueKeysArgs, str]] = handle_invalid_key
+              ) -> str:
     # TODO: fill in insanity.json
+    # TODO: change every single get_input thing with its own replaceable function
     print_error = _validate_argument_function(print_error, stderr.write)
-    if type(input_system) != dict or type(output_system) != dict:
-        print_error("Invalid system input. Something isn't a python dictionary.\n")
+    if type(input_system) != dict:
+        print_error("Invalid input system. Not a dictionary.\n")
+        return ""
+    if type(output_system) != dict:
+        print_error("Invalid output system. Not a dictionary.\n")
         return ""
     get_input = _validate_argument_function(get_input, input, print_error = print_error)
     print_function = _validate_argument_function(print_function, print, print_error = print_error)
@@ -360,20 +379,28 @@ def translate(user_input: str,
                         if previous_instances_count > 1:
                             end_index -= 1
                             symbol = line[start_index:end_index]
-                            chosen_option = handle_doubled(symbol, find_key_by_value(filtered_input_system, symbol), print_function = print_function)
-                            match chosen_option:
-                                case "exit":
-                                    exit_signal = True
-                                    break
-                                case "ignore":
-                                    previous_instances_count = len(symbol_instances)
-                                    end_index +=1
-                                case "invalid":
-                                    pass # Normally I'd put "continue" here, but it does that anyway after every case.
+                            match [instance for instance in list(filtered_input_system.values()) if instance[:len(symbol)] == symbol].count(symbol):
+                                # Not using symbol_instances because it's the list of symbol instances before the symbol was redefined
+                                case 0:
+                                    previous_instances_count = 0
+                                case 1:
+                                    append_to_keys(find_key_by_value(filtered_input_system, symbol)[0])
                                 case _:
-                                    append_to_keys(chosen_option)
+                                    chosen_option = doubled_value_handling(symbol = symbol,
+                                                                           keys = find_key_by_value(filtered_input_system, symbol))
+                                    match chosen_option:
+                                        case "exit":
+                                            exit_signal = True
+                                            break
+                                        case "ignore":
+                                            previous_instances_count = len(symbol_instances)
+                                            end_index += 1
+                                        case "invalid":
+                                            print_function("\nInvalid option.\n")
+                                        case _:
+                                            append_to_keys(chosen_option)
                             continue
-                        match handle_invalid_value(symbol, print_function = print_function):
+                        match invalid_value_handling(symbol = symbol):
                             case "exit":
                                 exit_signal = True
                                 break
@@ -432,7 +459,7 @@ def translate(user_input: str,
                                 symbols_to_ignore.update({randomized_key: symbol})
                                 processed_output_system.update({randomized_key: symbol})
                             case "invalid":
-                                pass
+                                print_function("\nInvalid option.\n")
                         continue
                     case 1:
                         if symbol != symbol_instances[0]:
@@ -449,7 +476,8 @@ def translate(user_input: str,
                             if len(find_key_by_value(filtered_input_system, symbol)) == 1:
                                 append_to_keys(find_key_by_value(filtered_input_system, symbol)[0])
                                 continue
-                            chosen_option = handle_doubled(symbol, find_key_by_value(filtered_input_system, symbol))
+                            chosen_option = doubled_value_handling(symbol = symbol,
+                                                                   keys = find_key_by_value(filtered_input_system, symbol))
                             match chosen_option:
                                 case "exit":
                                     exit_signal = True
@@ -457,7 +485,7 @@ def translate(user_input: str,
                                 case "ignore":
                                     previous_instances_count = len(symbol_instances)
                                 case "invalid":
-                                    pass
+                                    print_function("\nInvalid option.\n")
                                 case _:
                                     append_to_keys(chosen_option)
                             continue
@@ -487,7 +515,7 @@ def translate(user_input: str,
                         translation_index += 1
                         continue
                     print_function(f"Here is the currently translated portion of the notation:\n{"".join(keys_translated_to_notation)}")
-                    match handle_invalid_key(key, print_function = print_function):
+                    match invalid_key_handling(key = key):
                         case "remove":
                             print_function("All instances? [n/Y]")
                             change_all_instances_choice = get_input()
@@ -523,6 +551,8 @@ def translate(user_input: str,
                                 key = "cadence and clarity/note"
                                 notes.append(note_contents)
                                 previous_was_invalid = True
+                        case "invalid":
+                            print_function("\nInvalid option.\n")
                         case "exit":
                             exit_signal = True
                             break
@@ -565,6 +595,7 @@ if __name__ == "__main__":
                 case "exit":
                     break
                 case "invalid":
+                    print_error("\nInvalid input system.\n")
                     continue
             print("To: ", end="")
             output_system = input_valid_system([system for system in all_systems if system != input_system])
@@ -573,6 +604,7 @@ if __name__ == "__main__":
                 case "exit":
                     break
                 case "invalid":
+                    print_error("\nInvalid output system.\n")
                     continue
             stderr.write(f"""\nType or paste in the move(s) you want to translate.
 When finished, enter an empty line.
