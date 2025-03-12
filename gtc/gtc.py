@@ -22,22 +22,30 @@ quit_words = ["exit", "close", "quit"]
 #   and then use these functions in your own scripts. If it doesn't work,
 #   ¯\_(ツ)_/¯
 def load_charts():
+    # Load charts from json
     json_list = []
+    # List all files in directory
     for file_name in os.listdir(folder_path):
+        # Filter only JSON files
         if file_name.endswith('.json'):
             try:
+                # Get fullpath
                 file_path = os.path.join(folder_path, file_name)
+                # Open filepath and manipulate
                 with open(file_path, 'r', encoding='utf-8') as file:
+                    # Load and read data into the list
                     data = json.load(file)  
                     json_list.append(data)
             except Exception as e:
+                # Print our error messsage
                 print(f"Error reading {file_name}: {e}")
+    # Return the finalized list
     return json_list
 
-def dict_find_key_by_value(system, value):
-    return list(system.keys())[list(system.values()).index(value)]
+def dict_find_key_by_value(system: dict, value):
+    return system.keys()[system.values().index(value)]
 
-def find_system_by_name(systems, name):
+def find_system_by_name(systems: dict[str], name):
     try:
         for obj in systems:
             for element in range(len(obj["name"]) + 1):
@@ -79,15 +87,15 @@ def handle_invalid_value(symbol):
     if user_input in quit_words:
         return "exit"
     match user_input:
-        case "1":
+        case "1"|"remove":
             return "remove"
-        case "2":
+        case "2"|"change":
             return "change"
-        case "3":
+        case "3"|"assign":
             return "assign"
-        case "4":
+        case "4"|"include":
             return "include"
-        case "5":
+        case "5"|"ignore":
             return "ignore"
         case _:
             print("\nInvalid option.\n")
@@ -126,13 +134,13 @@ def handle_invalid_key(key):
     if user_input in quit_words:
         return "exit"
     match user_input:
-        case "1":
+        case "1"|"remove":
             return "remove"
-        case "2":
+        case "2"|"change":
             return "change"
-        case "3":
+        case "3"|"assign":
             return "assign"
-        case "4":
+        case "4"|"note":
             return "note"
         case _:
             print("\nInvalid option.\n")
@@ -165,6 +173,7 @@ def translate(user_input, from_system, to_system):
     def reset_index_distance():
         nonlocal start_index, end_index
         start_index = end_index - 1
+    # define processed variable
     processed_user_input = user_input
     def filter_system_for_shiftstones(system):
         filtered_system = system.copy()
@@ -185,8 +194,6 @@ def translate(user_input, from_system, to_system):
     input_translated_to_keys = []
     keys_translated_to_notation = []
     exit_signal = False
-    from_system_bools = yoink_bools(from_system)
-    to_system_bools = yoink_bools(to_system)
     previous_number_of_instances = 0
     while start_index < len(processed_user_input) and end_index < len(processed_user_input) + 1:
         symbol = processed_user_input[start_index:end_index]
