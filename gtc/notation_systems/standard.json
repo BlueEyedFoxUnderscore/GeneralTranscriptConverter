@@ -1,104 +1,91 @@
 {
-  "name": ["standard", "normal", "normnote"],
-
-  "structures": {
-    "disc": "d",
-    "pillar": "p",
-    "ball": "b",
-    "cube": "c",
-    "wall": "w",
-    "boulder": "o",
-    "wildcard": "s"
+  "header":{
+    "name": ["standard", "normal", "normnote"],
+    "id": "default"
   },
 
-  "modifiers": {
-    "straight": "S",
-    "kick": "K",
-    "uppercut": "U",
-    "ground": "G",
-    "parry": "P",
-    "hold": "H",
-    "flick": "F",
-    "explode": "E",
-    "guard": "g"
+  "tokens": {
+    "<structure:disc>": ["d"],
+    "<structure:pillar>": ["p"],
+    "<structure:ball>": ["b"],
+    "<structure:cube>": ["c"],
+    "<structure:wall>": ["w"],
+    "<structure:boulder>": ["o"],
+    "<structure:wildcard>": ["s\uFE00", "s\uFE00", "s"],
+    
+    "<modifier:straight>": ["S"],
+    "<modifier:kick>": ["K"],
+    "<modifier:uppercut>": ["U"],
+    "<modifier:ground>": ["G"],
+    "<modifier:parry>": ["P"],
+    "<modifier:hold>": ["H"],
+    "<modifier:flick>": ["F"],
+    "<modifier:explode>": ["E"],
+    "<modifier:guard>": ["g"],
+
+    "<0>": ["0"],
+    "<1>": ["1"],
+    "<2>": ["2"],
+    "<3>": ["3"],
+    "<4>": ["4"],
+    "<5>": ["5"],
+    "<6>": ["6"],
+    "<7>": ["7"],
+    "<8>": ["8"],
+    "<9>": ["9"],
+    
+    "<movement:move>": ["m"],
+    "<movement:dash>": ["D"],
+    "<movement:jump>": ["J"],
+    "<movement:turnL>": ["t\uFE01", "t\uFE01!\uFE01left\\", "t"],
+    "<movement:turnR>": ["t\uFE00", "t\uFE00!\uFE01right\\", "t"],
+
+    "<flight:bump->": ["B"],
+    "<flight:mount->": ["M"],
+
+    "<stone:adamantStone>": ["A"],
+    "<stone:chargeStone>": ["C"],
+    "<stone:flowStone>": ["F"],
+    "<stone:guardStone>": ["G"],
+    "<stone:stubbornStone>": ["S"],
+    "<stone:surgeStone>": ["s\uFE01", "s"],
+    "<stone:vigorStone>": ["v"],
+    "<stone:volatileStone>": ["V"],
+
+    "<special:stone_delimiter>": ["/"],
+    "<special:basePose>": ["="],
+    "<special:run>": ["R"],
+    "<special:uTurn>": ["u"],
+    "<special:lockOn>": ["^"],
+    "<special:arrow>": [">\uFE01", ">"],
+    "<special:swap+>": ["*\uFE00", "*"],
+    "<special:swap->": ["*\uFE01", "*"],
+    "<special:repeat>": ["..."],
+    "<special:charge+>": ["**\uFE00", "**"],
+    "<special:charge->": ["**\uFE01", "**"],
+
+    "<delineation:note>": ["!"],
+    "<delineation:pause>": ["."],
+    "<delineation:wait>": ["_"],
+    "<delineation:space>": [" "],
+
+    "<state:grounded+>": ["["],
+    "<state:grounded->": ["]"],
+    "<state:free+>": ["("],
+    "<state:free->": [")"],
+    "<state:incoming+>": ["{"],
+    "<state:incoming->": ["}"],
+    "<state:explosive+>": ["<"],
+    "<state:explosive->": [">\uFE00", ">"],
+    "<state:wildcard+>": ["|\uFE00", "|"],
+    "<state:wildcard->": ["|\uFE01", "|"]
   },
 
-  "orderAfterMods": true,
-
-  "numbers": {
-    "zero": "0",
-    "one": "1",
-    "two": "2",
-    "three": "3",
-    "four": "4",
-    "five": "5",
-    "six": "6",
-    "seven": "7",
-    "eight": "8",
-    "nine": "9"
-  },
-
-  "movement": {
-    "move": "m",
-    "dash": "D",
-    "jump": "J",
-    "turnLeft": "t",
-    "turnRight": "t"
-  },
-  
-  "intent": false,
-
-  "flight": {
-    "bumpEnd": "B",
-    "mountEnd": "M"
-  },
-
-  "shiftstones": {
-    "adamantStone": "A",
-    "chargeStone": "C",
-    "flowStone": "F",
-    "guardStone": "G",
-    "stubbornStone": "S",
-    "surgeStone": "s",
-    "vigorStone": "v",
-    "volatileStone": "V",
-    "delimiter": "/"
-  },
-
-  "cadenceAndClarity": {
-    "note": "!",
-    "pause": ".",
-    "wait": "_",
-    "space": " "
-  },
-
-  "structureStates": true,
-
-  "states": {
-    "groundedStart": "[",
-    "groundedEnd": "]",
-    "freeStart": "(",
-    "freeEnd": ")",
-    "incomingStart": "{",
-    "incomingEnd": "}",
-    "explosiveStart": "<",
-    "explosiveEnd": ">",
-    "wildcardStart": "|",
-    "wildcardEnd": "|"
-  },
-
-  "additionalSymbols": true,
-
-  "additional": {
-    "basePose": "=",
-    "run": "R",
-    "uTurn": "u",
-    "lockOn": "^",
-    "arrow": " > ",
-    "swapStart": "*",
-    "swapEnd": "*",
-    "repeat": "...",
-    "chargeStart": "**",
-    "chargeEnd": "**"
+  "footer":{
+    "orderAfterMods": true,
+    "degreeTurns": false,
+    "intent": false,
+    "structureStates": true,
+    "additionalSymbols": true
   }
 }

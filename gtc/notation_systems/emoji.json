@@ -1,106 +1,91 @@
 {
-  "name": ["emoji", "emojinote"],
-
-  "structures": {
-    "disc": ":flying_disc:",
-    "pillar": ":pill:",
-    "ball": ":tennis:",
-    "cube": ":ice_cube:",
-    "wall": ":bricks:",
-    "boulder": ":rock:",
-    "wildcard": ":question:"
+  "header": {
+    "name": ["emoji", "emojinote"],
+    "id": "emoji"
   },
 
-  "modifiers": {
-    "straight": ":right_facing_fist:",
-    "kick": ":palm_down_hand:",
-    "uppercut": ":fist:",
-    "ground": ":thumbsdown:",
-    "parry": ":rightwards_pushing_hand:",
-    "hold": ":palm_up_hand:",
-    "flick": ":rightwards_hand:",
-    "explode": ":clap:",
-    "guard": ":palms_up_together:"
+  "tokens": {      
+    "<structure:disc>": [":flying_disc:"],
+    "<structure:pillar>": [":pill:"],
+    "<structure:ball>": [":tennis:"],
+    "<structure:cube>": [":ice_cube:"],
+    "<structure:wall>": [":bricks:"],
+    "<structure:boulder>": [":rock:"],
+    "<structure:wildcard>": [":question:"],
+
+    "<modifier:straight>": [":right_facing_fist:"],
+    "<modifier:kick>": [":palm_down_hand:"],
+    "<modifier:uppercut>": [":fist:"],
+    "<modifier:ground>": [":thumbsdown:"],
+    "<modifier:parry>": [":rightwards_pushing_hand:"],
+    "<modifier:hold>": [":palm_up_hand:"],
+    "<modifier:flick>": [":rightwards_hand:"],
+    "<modifier:explode>": [":clap:"],
+    "<modifier:guard>": [":palms_up_together:"],
+
+    "<0>": [":zero:"],
+    "<1>": [":one:"],
+    "<2>": [":two:"],
+    "<3>": [":three:"],
+    "<4>": [":four:"],
+    "<5>": [":five:"],
+    "<6>": [":six:"],
+    "<7>": [":seven:"],
+    "<8>": [":eight:"],
+    "<9>": [":nine:"],
+
+    "<movement:move>": [":person_walking:"],
+    "<movement:dash>": [":dash:"],
+    "<movement:jump>": [":kangaroo:"],
+    "<movement:turnL>": [":arrow_right_hook:"],
+    "<movement:turnR>": [":leftwards_arrow_with_hook:"],
+
+    "<flight:bumpEnd>": [":airplane_small:"],
+    "<flight:mountEnd>": [":mountain_snow:"],
+
+    "<stone:adamantStone>": [":purple_square:"],
+    "<stone:chargeStone>": [":yellow_circle:"],
+    "<stone:flowStone>": [":large_blue_diamond:"],
+    "<stone:guardStone>": [":orange_circle:"],
+    "<stone:stubbornStone>": [":blue_circle:"],
+    "<stone:surgeStone>": [":green_circle:"],
+    "<stone:vigorStone>": [":green_heart:"],
+    "<stone:volatileStone>": [":small_red_triangle_down:"],
+
+    "<special:stone_delimiter>": [":hash:"],
+    "<special:basePose>": [":heavy_equals_sign:"],
+    "<special:run>": [":person_running:"],
+    "<special:uTurn>": [":arrow_heading_down:"],
+    "<special:lockOn>": [":arrow_heading_up:"],
+    "<special:arrow>": [":arrow_right:"],
+    "<special:swap+>": [":asterisk:"],
+    "<special:swap->": [":asterisk:"],
+    "<special:repeat>": [":repeat:"],
+    "<special:charge+>": [":high_brightness:"],
+    "<special:charge->": [":high_brightness:"],
+    
+    "<delineation:note>": [":exclamation:"],
+    "<delineation:pause>": [":stopwatch:"],
+    "<delineation:wait>": [":hourglass:"],
+    "<delineation:space>": [" "],
+
+    "<state:grounded+>": [":previous_track:"],
+    "<state:grounded->": [":next_track:"],
+    "<state:free+>": [":rewind:"],
+    "<state:free->": [":fast_forward:"],
+    "<state:incoming+>": [":arrow_double_down:"],
+    "<state:incoming->": [":arrow_double_up:"],
+    "<state:explosive+>": [":arrow_backwards:"],
+    "<state:explosive->": [":arrow_forwards:"],
+    "<state:wildcard+>": [":pause_button:"],
+    "<state:wildcard->": [":pause_button:"]
   },
 
-  "orderAfterMods": true,
-  
-  "numbers": {
-    "zero": ":zero:",
-    "one": ":one:",
-    "two": ":two:",
-    "three": ":three:",
-    "four": ":four:",
-    "five": ":five:",
-    "six": ":six:",
-    "seven": ":seven:",
-    "eight": ":eight:",
-    "nine": ":nine:"
-  },
-
-  "degreeTurns": false,
-
-  "movement": {
-    "move": ":person_walking:",
-    "dash": ":dash:",
-    "jump": ":kangaroo:",
-    "turnLeft": ":arrow_right_hook:",
-    "turnRight": ":leftwards_arrow_with_hook:"
-  },
-  
-  "intent": false,
-
-  "flight": {
-    "bumpEnd": ":airplane_small:",
-    "mountEnd": ":mountain_snow:"
-  },
-
-  "shiftstones": {
-    "adamantStone": ":purple_square:",
-    "chargeStone": ":yellow_circle:",
-    "flowStone": ":large_blue_diamond:",
-    "guardStone": ":orange_circle:",
-    "stubbornStone": ":blue_circle:",
-    "surgeStone": ":green_circle:",
-    "vigorStone": ":green_heart:",
-    "volatileStone": ":small_red_triangle_down:",
-    "delimiter": ":hash:"
-  },
-
-  "cadenceAndClarity": {
-    "note": ":exclamation:",
-    "pause": ":stopwatch:",
-    "wait": ":hourglass:",
-    "space": " "
-  },
-
-  "structureStates": true,
-
-  "states": {
-    "groundedStart": ":previous_track:",
-    "groundedEnd": ":next_track:",
-    "freeStart": ":rewind:",
-    "freeEnd": ":fast_forward:",
-    "incomingStart": ":arrow_double_down:",
-    "incomingEnd": ":arrow_double_up:",
-    "explosiveStart": ":arrow_backwards:",
-    "explosiveEnd": ":arrow_forwards:",
-    "wildcardStart": ":pause_button:",
-    "wildcardEnd": ":pause_button:"
-  },
-
-  "additionalSymbols": true,
-
-  "additional": {
-    "basePose": ":heavy_equals_sign:",
-    "run": ":person_running:",
-    "uTurn": ":arrow_heading_down:",
-    "lockOn": ":arrow_heading_up:",
-    "arrow": ":arrow_right:",
-    "swapStart": ":asterisk:",
-    "swapEnd": ":asterisk:",
-    "repeat": ":repeat:",
-    "chargeStart": ":high_brightness:",
-    "chargeEnd": ":high_brightness:"
+  "footer": {
+    "orderAfterMods": true,
+    "degreeTurns": false,
+    "intent": false,
+    "structureStates": true,
+    "additionalSymbols": true
   }
 }

@@ -1,103 +1,90 @@
 {
-  "name": ["text", "human", "english"],
-
-  "structures": {
-    "disc": "summon disc, then ",
-    "pillar": "summon pillar, then ",
-    "ball": "summon ball, then ",
-    "cube": "summon cube, then ",
-    "wall": "summon wall, then ",
-    "boulder": "on boulder, ",
-    "wildcard": "on any structure, "
-  },
-
-  "modifiers": {
-    "straight": "straight ",
-    "kick": "kick ",
-    "uppercut": "uppercut ",
-    "ground": "ground ",
-    "parry": "parry ",
-    "hold": "hold ",
-    "flick": "flick ",
-    "explode": "explode ",
-    "guard": "guard "
-  },
-
-  "orderAfterMods": true,
-
-  "numbers": {
-    "one": "structure one, ",
-    "two": "structure two, ",
-    "three": "structure three, ",
-    "four": "structure four, ",
-    "five": "structure five, ",
-    "six": "structure six, ",
-    "seven": "structure seven, ",
-    "eight": "structure eight, ",
-    "nine": "structure nine, "
-  },
-
-  "movement": {
-    "move": "move, ",
-    "dash": "dash, ",
-    "jump": "jump, ",
-    "turnLeft": "turn to the left, ",
-    "turnRight": "turn to the right, "
+  "header": {
+    "name": ["text", "human", "english"],
+    "id": "readable"
   },
   
-  "intent": false,
+  "tokens": {
+    "<structures:disc>": ["summon disc, then "],
+    "<structures:pillar>": ["summon pillar, then "],
+    "<structures:ball>": ["summon ball, then "],
+    "<structures:cube>": ["summon cube, then "],
+    "<structures:wall>": ["summon wall, then "],
+    "<structures:boulder>": ["on boulder, "],
+    "<structures:wildcard>": ["on any structure, "],
+    
+    "<modifiers:straight>": ["straight "],
+    "<modifiers:kick>": ["kick "],
+    "<modifiers:uppercut>": ["uppercut "],
+    "<modifiers:ground>": ["ground "],
+    "<modifiers:parry>": ["parry "],
+    "<modifiers:hold>": ["hold "],
+    "<modifiers:flick>": ["flick "],
+    "<modifiers:explode>": ["explode "],
+    "<modifiers:guard>": ["guard "],
 
-  "flight": {
-    "bumpEnd": "then bump, ",
-    "mountEnd": "then mount, "
+    "<0>": ["structure zero, "],
+    "<1>": ["structure one, "],
+    "<2>": ["structure two, "],
+    "<3>": ["structure three, "],
+    "<4>": ["structure four, "],
+    "<5>": ["structure five, "],
+    "<6>": ["structure six, "],
+    "<7>": ["structure seven, "],
+    "<8>": ["structure eight, "],
+    "<9>": ["structure nine, "],
+
+    "<movement:move>": ["move, "],
+    "<movement:dash>": ["dash, "],
+    "<movement:jump>": ["jump, "],
+    "<movement:turnL>": ["turn to the left, "],
+    "<movement:turnR>": ["turn to the right, "],
+
+    "<flight:bump->": ["then bump, "],
+    "<flight:mount->": ["then mount, "],
+
+    "<stones:adamantStone>": ["with adamant, "],
+    "<stones:chargeStone>": ["with charge, "],
+    "<stones:flowStone>": ["with flow, "],
+    "<stones:guardStone>": ["with guard, "],
+    "<stones:stubbornStone>": ["with stubborn, "],
+    "<stones:surgeStone>": ["with surge, "],
+    "<stones:vigorStone>": ["with vigor, "],
+    "<stones:volatileStone>": ["with volatile, "],
+
+    "<delimiters:note>": ["(note) "],
+    "<delimiters:pause>": ["pause, "],
+    "<delimiters:wait>": ["wait, "],
+    "<delimiters:space>": ["\uFE00"],
+
+    "<state:grounded+>": ["\uFE01"],
+    "<state:grounded->": [" while grounded, "],
+    "<state:free+>": ["\uFE02"],
+    "<state:free->": [" while free, "],
+    "<state:incoming+>": ["\uFE03"],
+    "<state:incoming->": [" as it is incoming, "],
+    "<state:explosive+>": ["\uFE04"],
+    "<state:explosive->": [" while explosive, "],
+    "<state:wildcard+>": ["\uFE05"],
+    "<state:wildcard->": [" while in any state, "],
+
+    "<special:stone_delimiter>": ["do the following: "],
+    "<special:basePose>": ["go into base pose, "],
+    "<special:run>": ["run, "],
+    "<special:uTurn>": ["turn around, "],
+    "<special:lockOn>": ["lock onto the opponent, "],
+    "<special:arrow>": ["then "],
+    "<special:swap+>": ["(with swapped hands)"],
+    "<special:swap->": ["\uFE06"],
+    "<special:repeat>": ["repeat, "],
+    "<special:charge+>": ["(while charged)"],
+    "<special:charge->": ["\uFE07"]
   },
-
-  "shiftstones": {
-    "adamantStone": "with adamant, ",
-    "chargeStone": "with charge, ",
-    "flowStone": "with flow, ",
-    "guardStone": "with guard, ",
-    "stubbornStone": "with stubborn, ",
-    "surgeStone": "with surge, ",
-    "vigorStone": "with vigor, ",
-    "volatileStone": "with volatile, ",
-    "delimiter": "do the following: "
-  },
-
-  "cadenceAndClarity": {
-    "note": "(note) ",
-    "pause": "pause, ",
-    "wait": "wait, ",
-    "space": ""
-  },
-
-  "structureStates": true,
-
-  "states": {
-    "groundedStart": "[",
-    "groundedEnd": "]",
-    "freeStart": "(",
-    "freeEnd": ")",
-    "incomingStart": "{",
-    "incomingEnd": "}",
-    "explosiveStart": "<",
-    "explosiveEnd": ">",
-    "wildcardStart": "|",
-    "wildcardEnd": "|"
-  },
-
-  "additionalSymbols": true,
-
-  "additional": {
-    "basePose": "go into base pose, ",
-    "run": "run, ",
-    "uTurn": "turn around, ",
-    "lockOn": "lock onto the opponent, ",
-    "arrow": "then ",
-    "swapStart": "*",
-    "swapEnd": "*",
-    "repeat": "repeat, ",
-    "chargeStart": "**",
-    "chargeEnd": "**"
+  "footer": {
+    "orderAfterMods": true,
+    "degreeTurns": false,
+    "intent": false,
+    "structureStates": true,
+    "additionalSymbols": true
   }
 }
