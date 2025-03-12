@@ -18,6 +18,20 @@ folder_path = os.path.join(script_dir, "notation_systems")
 quit_words = ["exit", "close", "quit"]
 # You can quit the program at any time by typing one of these words.
 
+header = """
+╔═══════════════════════════════════════════════════════╗
+║  ,.-</#@$>,      ,.-~=+>#$@>$#$(>*"`   ,..sDG#$       ║
+║ /|$      \%$     "'`    \#$#          /D<             ║
+║ |&%   ,.   '             |%|         <$?              ║
+║  \#$   \$.,              $#           CD\      ,$     ║
+║   `<&>,./.d             <>?             ec>#$#%/      ║
+║     `'*'`               `                             ║
+║ G E N E R A L  T R A N S C R I P T  C O N V E R T E R ║
+╚═══════════════════════════════════════════════════════╝
+        Made by Oxity (mostly) and BlueEyedFox_
+"""
+
+
 # I think you should be able to use this script as a module
 #   and then use these functions in your own scripts. If it doesn't work,
 #   ¯\_(ツ)_/¯
@@ -48,7 +62,9 @@ def dict_find_key_by_value(system: dict, value):
 def find_system_by_name(systems: dict[str], name):
     try:
         for obj in systems:
+            # For (Current system) in (Range of systems)
             for element in range(len(obj["name"]) + 1):
+                # If (Get name from Dict containing JSON data) = (Name I'm looking for)
                 if obj["name"][element-1] == name:
                     return obj
     except:
