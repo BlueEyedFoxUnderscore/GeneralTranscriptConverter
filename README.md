@@ -11,10 +11,10 @@ It can translate between:
 - [ ] **Unclarinote**
 - [ ] **Yiaknote**
 - [ ] **Multithread**
-- [ ]   **Basic Multithread**
-- [ ]   **Advanced TRs**
-- [ ]   **Exclusions/Shorthand**
-- [ ]   **Atomicization**
+- [ ]   *Basic Multithread*
+- [ ]   *Advanced TRs*
+- [ ]   *Exclusions/Shorthand*
+- [ ]   *Atomicization*
 
 It automatically handles shiftstones, regardless of system.
 Notes can be added individually. **Don't copy paste the notation with the notes. The script doesn't handle multi-line input** (yet),
