@@ -74,13 +74,14 @@ def find_system_by_name(systems: dict[str], name):
 
 def input_valid_system(systems, prompt):
     user_input = input(prompt)
+    # Quit if in quit words
+    # ? Oxity, is this needed? You can always quit a program with ctrl+C. - BlueEyedFox_
     if user_input in quit_words:
         return "exit"
-    if find_system_by_name(systems, user_input) == None:
-        print("Invalid system.")
-        return "invalid"
-    else:
-        return find_system_by_name(systems, user_input)
+    # > Indexing an array is expensive, cut down on processor cycles here by condensing calls - BlueEyedFox_
+    system = find_system_by_name(systems, user_input)
+    if system == None: print("Invalid system.")
+    return system if system != None else "invalid"
 
 def find_instances_in_system(system, symbol):
     all_values = []
