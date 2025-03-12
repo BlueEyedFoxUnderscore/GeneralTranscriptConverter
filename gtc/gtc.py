@@ -10,6 +10,7 @@
 # For further functionality, either modify this script,
 # make a pull request or contact Oxity on Discord (.oxity).
 
+import enum
 import os, json, random
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -48,7 +49,11 @@ header = """
 # I think you should be able to use this script as a module
 #   and then use these functions in your own scripts. If it doesn't work,
 #   ¯\_(ツ)_/¯
-def load_charts():
+def load_charts() -> dict[str]:
+    """
+    Loads charts from the /notation_systems directory.
+    """
+
     # Load charts from json
     json_list = []
     # List all files in directory
@@ -70,8 +75,11 @@ def load_charts():
     return json_list
 
 def dict_find_key_by_value(system: dict[str], value) -> str:
+    """
+    Searches for key in a dict. Utility function.
+    """
     # > Oops! Forgot that dict_values don't have .index() function. Returned.
-    return system.keys()[list(system.values()).index(value)]
+    return list(system.keys())[list(system.values()).index(value)]
 
 def find_system_by_name(systems: list[dict[str]], name: str) -> Optional[dict[str]]:
     try:
@@ -113,7 +121,14 @@ def find_instances_in_system(system: dict[str], symbol: str) -> list[str]:
             all_instances.append(instance)
     return all_instances
 
-def handle_invalid_value(symbol):
+class INVALID_VALUE_OPTIONS(enum.Enum):
+    REMOVE = 1
+    CHANGE = 2
+    ASSIGN = 3
+    INCLUDE = 4
+    IGNORE = 5
+
+def handle_invalid_value(symbol) -> str:
     # Prompt for user input.
     user_input = input(f'''
     "{symbol}" is not a valid value in the input system. How would you like to handle it?
@@ -164,7 +179,7 @@ def handle_doubled(symbol, keys):
                 return "ignore"
             case _:
                 # > Added "raise" clause to trigger invalid option to appear.
-                if keys[abs(int(user_input)) - 1] == None: raise Exception
+                if keys[abs(int(user_input)) - 1] == None: raise Exception.add_note("Self-raised")
                 return keys[abs(int(user_input)) - 1]
     except:
         print("\nInvalid option.\n")
@@ -208,14 +223,13 @@ def flatten_system(system: dict[str, dict[str]|bool]) -> dict[str, str]:
         # Sort for dict objects
         if type(obj) == dict:
             # Get keys from dict, form compound key, and add compound key directly to processed_system
-            # > Replaced with list comprehension for more compact code
-            [processed_system.update({{f"{dict_find_key_by_value(system, obj)}/{child_key}": obj[child_key]}}) for child_key in list(obj.keys())]
-            """for child_key in list(obj.keys()):
+            # > Apparently I'm an idiot and don't know how list comprehensions work, returned longer form code
+            for child_key in list(obj.keys()):
                 # Get compound key from system
                 parent_key = dict_find_key_by_value(system, obj)
                 processed_key = f"{parent_key}/{child_key}"
                 # Add these compound keys to the system
-                processed_system.update({processed_key: obj[child_key]})"""
+                processed_system.update({processed_key: obj[child_key]})
     # Return finalized system
     return processed_system
 
@@ -233,21 +247,36 @@ def yoink_bools(system:dict[str]) -> dict[str, bool]:
 
 # I fear no commented function. But that thing? It scares me. - BlueEyedFox_
 def translate(user_input:str, from_system, to_system):
+
     start_index = 0
     end_index = 1
     # Local function defined to increment indices
     def increment_indices():
+        """
+        Increment our indices.
+
+        This advances the character window.
+        """
         nonlocal start_index, end_index
         start_index += 1
         end_index += 1
     # Local function defined to reset start/end indices relative to end
     # - Interesting. I would reset it to start for a utility function, but I'll see where it's used and figure it out from there. 
     def reset_index_distance():
+        """
+        Resets distance to end.
+        
+        Whenever you see this, it just means that we're advancing our output token.
+        """
         nonlocal start_index, end_index
         start_index = end_index - 1
     # Define processed user input.
     processed_user_input = user_input
     def filter_system_for_shiftstones(system: dict):
+        """
+        Filter out tokens before and after shiftstones. Essentially, we remove everything up to the shiftstone token.
+        """
+
         # Make a copy of input system
         filtered_system = system.copy()
         # Iterate through each key
@@ -368,7 +397,7 @@ def translate(user_input:str, from_system, to_system):
                         all_parent_keys = [key for key, value in from_system.items() if type(value) == dict]
 
                         # Get assigned parent/child key from user input
-                        assigned_parent_key = input(f"Insert the category of {symbol} ({", ".join(all_parent_keys)} or custom category): ")
+                        assigned_parent_key = input(f"Insert the category of {symbol}" + ", ".join(all_parent_keys) + "(or custom category): ")
                         assigned_child_key = input(f"Insert a key for {symbol}: ")
 
                         # Generated full key
@@ -517,7 +546,7 @@ def translate(user_input:str, from_system, to_system):
             translation_index += 1
             previous_was_invalid = False
         except:
-            print(f"Here is the currently translated portion of the notation:\n{"".join(keys_translated_to_notation)}")
+            print(f"Here is the currently translated portion of the notation:\n {''.join(keys_translated_to_notation)}")
 
             # Prompt for handling invalid key
             match handle_invalid_key(working_token):
@@ -556,7 +585,7 @@ def translate(user_input:str, from_system, to_system):
                         working_token = changed_key
                 case "assign":
                     # Assign to a new translated token
-                    flattened_to_system.update({working_token: f"{input(f"Assign a value to {working_token}: ")}"})
+                    flattened_to_system.update({working_token: f"{input(f'Assign a value to {working_token}: ')}"})
                 case "note":
                     # Prompt user to ask if we should change all instances to notes
                     change_all_instances_choice = input("All instances? [n/Y] > ")
@@ -591,34 +620,38 @@ def translate(user_input:str, from_system, to_system):
     for note_symbol in keys_translated_to_notation:
         if note_symbol == flattened_to_system["cadenceAndClarity/note"]:
             number_of_notes += 1
-            translated_notation += f"\n{note_symbol}{input(f"Note {number_of_notes}: ")}"
+            translated_notation += f"\n{note_symbol}{input(f'Note {number_of_notes}: ')}"
     
     # Return fully translated notation
     return translated_notation
 
 if __name__ == "__main__":
     all_systems = load_charts()
+    print(header)
+    print([a["name"] for a in all_systems])
     while True:
         try:
             input_system = input_valid_system(all_systems, "From: ")
             match input_system:
                 case "exit":
                     break
-                case "invalid":
+                case None:
                     continue
+            print("Got input system")
 
             output_system = input_valid_system([system for system in all_systems if system != input_system], "To: ")
-            # Every system except input_system.
             match output_system:
                 case "exit":
                     break
-                case "invalid":
+                case None:
                     continue
+            print("Got output system")
 
-            input_notation = input(f"From {input_system["name"][0]} to {output_system["name"][0]}: ")
+            input_notation = input(f"From {input_system['name'][0]} to {output_system['name'][0]}: ")
+            print("Got input notation")
             if input_notation in quit_words:
                 break
             print(f"\n{translate(input_notation, input_system, output_system)}\n")
         except Exception as e:
-            print(f"ERROR: {e}")
+            print(f"ERROR: {e.with_traceback()}")
             break
