@@ -18,14 +18,25 @@ folder_path = os.path.join(script_dir, "notation_systems")
 quit_words = ["exit", "close", "quit"]
 # You can quit the program at any time by typing one of these words.
 
+# make a pull request or contact Oxity on Discord (.oxity).
+
+import os, json, random
+from typing import Optional
+
+script_dir = os.path.dirname(os.path.abspath(__file__))
+folder_path = os.path.join(script_dir, "notation_systems")
+
+quit_words = ["exit", "close", "quit"]
+# You can quit the program at any time by typing one of these words.
+
 header = """
 ╔═══════════════════════════════════════════════════════╗
-║  ,.-</#@$>,      ,.-~=+>#$@>$#$(>*"`   ,..sDG#$       ║
-║ /|$      \%$     "'`    \#$#          /D<             ║
-║ |&%   ,.   '             |%|         <$?              ║
-║  \#$   \$.,              $#           CD\      ,$     ║
-║   `<&>,./.d             <>?             ec>#$#%/      ║
-║     `'*'`               `                             ║
+║  ,.-</#@$>,      ,.-~=+>#$@>$#$(>*"`   ,..<&%#$       ║
+║ /|$      \%$     "'`    \#$#          /%<             ║
+║ |&%   ,.   '             |%|         |$?              ║
+║  \#$   \$.,              $#           \$\      ,$     ║
+║   `<&>,./.d             <>?             <%>#$#%/      ║
+║     `'*'`               `                  ``         ║
 ║ G E N E R A L  T R A N S C R I P T  C O N V E R T E R ║
 ╚═════╤═══════════════════════════════════════════╤═════╝
       │  Made by 0xity (mostly) and BlueEyedFox_  │      
@@ -58,10 +69,11 @@ def load_charts():
     # Return the finalized list
     return json_list
 
-def dict_find_key_by_value(system: dict, value):
-    return system.keys()[system.values().index(value)]
+def dict_find_key_by_value(system: dict[str], value) -> str:
+    # > Oops! Forgot that dict_values don't have .index() function. Returned.
+    return system.keys()[list(system.values()).index(value)]
 
-def find_system_by_name(systems: dict[str], name):
+def find_system_by_name(systems: list[dict[str]], name: str) -> Optional[dict[str]]:
     try:
         for obj in systems:
             # For (Current system) in (Range of systems)
@@ -72,23 +84,31 @@ def find_system_by_name(systems: dict[str], name):
     except:
         return None
 
-def input_valid_system(systems, prompt):
+def input_valid_system(systems: dict, prompt: str) -> Optional[str]:
     user_input = input(prompt)
     # Quit if in quit words
-    # ? Oxity, is this needed? You can always quit a program with ctrl+C. - BlueEyedFox_
     if user_input in quit_words:
         return "exit"
-    # > Indexing an array is expensive, cut down on processor cycles here by condensing calls - BlueEyedFox_
+    # Find system
     system = find_system_by_name(systems, user_input)
+    # Iff system is None (not found), say nothing
     if system == None: print("Invalid system.")
-    return system if system != None else "invalid"
+    # > Changed to return None instead of "invalid" due to edge case of there being a notation system named "invalid"
+    # Return system
+    return system
 
-def find_instances_in_system(system, symbol):
-    all_values = []
+def find_instances_in_system(system: dict[str], symbol: str) -> list[str]:
+    # Initialize variables
+    # all_values = []
     all_instances = []
+    # For each value in values
+    # > Redid this so that it's shorter 
+    """
     for value in system.values():
-        all_values.append(value)
-    for instance in all_values:
+        # Append values
+        all_values.append(value)"""
+    c = [(type(x).__name__ == dict.__name__) for x in system.values()]
+    for instance in [*system.values()]:
         if instance[:len(symbol)] == symbol:
             all_instances.append(instance)
     return all_instances
@@ -165,23 +185,34 @@ def handle_invalid_key(key):
             print("\nInvalid option.\n")
             return "invalid"
 
-def process_system(system):
+def process_system(system: dict[str, dict[str]|bool]) -> dict[str, str]:
+    # Initiate variables
     processed_system = {}
+    # Get processed systems
     for obj in list(system.values()):
+        # Sort for dict objects
         if type(obj) == dict:
-            for child_key in list(obj.keys()):
+            # Get keys from dict, form compound key, and add compound key directly to processed_system
+            # > Replaced with list comprehension for more compact code
+            [processed_system.update({{f"{dict_find_key_by_value(system, obj)}/{child_key}": obj[child_key]}}) for child_key in list(obj.keys())]
+            """for child_key in list(obj.keys()):
+                # Get compound key from system
                 parent_key = dict_find_key_by_value(system, obj)
                 processed_key = f"{parent_key}/{child_key}"
-                processed_system.update({processed_key: obj[child_key]})
+                # Add these compound keys to the system
+                processed_system.update({processed_key: obj[child_key]})"""
+    # Return finalized system
     return processed_system
 
-def yoink_bools(system):
+def yoink_bools(system:dict[str]) -> dict[str, bool]:
     system_bools = []
     for bools in list(system.keys()):
         if type(system[bools]) == bool:
             system_bools.append({bools: system[bools]})
     return system_bools
 
+
+# I fear no commented function. But that thing? It scares me. - BlueEyedFox_
 def translate(user_input, from_system, to_system):
     start_index = 0
     end_index = 1
