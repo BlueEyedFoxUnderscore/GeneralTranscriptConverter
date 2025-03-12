@@ -114,6 +114,7 @@ def find_instances_in_system(system: dict[str], symbol: str) -> list[str]:
     return all_instances
 
 def handle_invalid_value(symbol):
+    # Prompt for user input.
     user_input = input(f'''
     "{symbol}" is not a valid value in the input system. How would you like to handle it?
     (1) Remove it.
@@ -123,8 +124,10 @@ def handle_invalid_value(symbol):
     (5) Ignore it.
 
     > ''')
+    # If in quit_words, quit.
     if user_input in quit_words:
         return "exit"
+    # Else, match to provided input (self-explanatory)
     match user_input:
         case "1"|"remove":
             return "remove"
@@ -140,28 +143,35 @@ def handle_invalid_value(symbol):
             print("\nInvalid option.\n")
 
 def handle_doubled(symbol, keys):
+    
     options = ""
     for key in keys:
         options += f"({keys.index(key) + 1}) {key}\n    "
+    # Prompt for user input.
     user_input = input(f'''
     "{symbol}" belongs to multiple keys.
     Which one would you like to insert?
     (0) None (will handle "{symbol}" as an invalid value)
     {options}
     > ''')
+    # If in quit_words, quit.
     if user_input in quit_words:
         return "exit"
+    # Match to options. Dynamic insertion means we need to use "raise" to quit.
     try:
         match user_input:
             case "0":
                 return "ignore"
             case _:
+                # > Added "raise" clause to trigger invalid option to appear.
+                if keys[abs(int(user_input)) - 1] == None: raise Exception
                 return keys[abs(int(user_input)) - 1]
     except:
         print("\nInvalid option.\n")
         return "invalid"
 
 def handle_invalid_key(key):
+    # Prompt for user input.
     user_input = input(f'''
     "{key}" doesn't have a value in the output system. How would you like to handle it?
     (1) Remove it.
@@ -170,8 +180,11 @@ def handle_invalid_key(key):
     (4) Turn it into a note.
     
     > ''')
+    
+    # Quit if in quit words.
     if user_input in quit_words:
         return "exit"
+    # Otherwise, match to user input (self explanatory)
     match user_input:
         case "1"|"remove":
             return "remove"
@@ -185,7 +198,9 @@ def handle_invalid_key(key):
             print("\nInvalid option.\n")
             return "invalid"
 
-def process_system(system: dict[str, dict[str]|bool]) -> dict[str, str]:
+# Renamed to flatten_system from process_system for less ambiguous code.
+
+def flatten_system(system: dict[str, dict[str]|bool]) -> dict[str, str]:
     # Initiate variables
     processed_system = {}
     # Get processed systems
@@ -205,80 +220,113 @@ def process_system(system: dict[str, dict[str]|bool]) -> dict[str, str]:
     return processed_system
 
 def yoink_bools(system:dict[str]) -> dict[str, bool]:
-    system_bools = []
-    for bools in list(system.keys()):
-        if type(system[bools]) == bool:
-            system_bools.append({bools: system[bools]})
+    # > Replaced system_bools with a dict for consistency's sake. Having a list of dicts is insane IMO.
+    # ? Just for my own curiosity, why was that? You could have made it a (str, bool) tuple.
+    system_bools = {}
+    # Sort for boolean values
+    # > Replaced name of iterant "bools" with "key" as not all iterants were, in fact, bools - that's the point of this function
+    for key in list(system.keys()):
+        # Iff the key is boolean, append it to the system_bools list.
+        if type(system[key]) == bool:
+            system_bools.update({key: system[key]})
     return system_bools
 
 
 # I fear no commented function. But that thing? It scares me. - BlueEyedFox_
-def translate(user_input, from_system, to_system):
+def translate(user_input:str, from_system, to_system):
     start_index = 0
     end_index = 1
+    # Local function defined to increment indices
     def increment_indices():
         nonlocal start_index, end_index
         start_index += 1
         end_index += 1
+    # Local function defined to reset start/end indices relative to end
+    # - Interesting. I would reset it to start for a utility function, but I'll see where it's used and figure it out from there. 
     def reset_index_distance():
         nonlocal start_index, end_index
         start_index = end_index - 1
-    # define processed variable
+    # Define processed user input.
     processed_user_input = user_input
-    def filter_system_for_shiftstones(system):
+    def filter_system_for_shiftstones(system: dict):
+        # Make a copy of input system
         filtered_system = system.copy()
+        # Iterate through each key
         for key in system.keys():
-            if shiftstoning:
-                if key[:len("shiftstones/")] != "shiftstones/":
+            # If this system uses shiftstoning and the first key doesn't start with shiftstones, or if it uses shiftsoning and doesn't, remove the first item.
+            # > Flattened to equivalent logical statement.
+            if (shiftstoning and key[:len("shiftstones/")] != "shiftstones/") or key[:len("shiftstones/")] == "shiftstones/":
                     filtered_system.pop(key)
-            else:
-                if key[:len("shiftstones/")] == "shiftstones/":
-                    filtered_system.pop(key)
+        # Return the processed system.
         return filtered_system
-    processed_from_system = process_system(from_system)
-    processed_to_system = process_system(to_system)
-    if processed_from_system["shiftstones/delimiter"] in processed_user_input:
-        shiftstoning = True
-    else:
-        shiftstoning = False
+    # Flatten systems.
+    flattened_from_system = flatten_system(from_system)
+    flattened_to_system = flatten_system(to_system)
+    # If the key with identity "shiftstones/delimiter" is present in the string to translate, shiftstoning is true
+    # > Flattened to an equivalent single identifier.
+    shiftstoning = flattened_from_system["shiftstones/delimiter"] in processed_user_input
+    # Instansiate tokenized and detokenized lists
     input_translated_to_keys = []
     keys_translated_to_notation = []
+    # Instansiate exit signal boolean
     exit_signal = False
+    # Instansiate previous number of instances variable
     previous_number_of_instances = 0
+    # While we haven't processed the whole string
     while start_index < len(processed_user_input) and end_index < len(processed_user_input) + 1:
+        # Get current symbol
         symbol = processed_user_input[start_index:end_index]
-        filtered_from_system = filter_system_for_shiftstones(processed_from_system)
-        if symbol == processed_from_system["shiftstones/delimiter"]:
-            shiftstoning = False
+        # Filter the system for shiftstones
+        filtered_from_system = filter_system_for_shiftstones(flattened_from_system)
+        # Iff the symbol is now the delimiter, we no longer need to filter.
+        # > Flattened to equivalent logical statement.
+        shiftstoning = (symbol == flattened_from_system["shiftstones/delimiter"])
+        # Begin matching symbol cases and define possible tokens.
         match len(symbol_instances := find_instances_in_system(filtered_from_system, symbol)):
+            # If there are no possible tokens
             case 0:
+                # If there are previous instances of this symbol
                 if previous_number_of_instances > 1:
+                    # Move back one
                     end_index -= 1
+                    # Set symbol to smaller portion
                     symbol = processed_user_input[start_index:end_index]
+                    # Handle doubled symbol
                     chosen_option = handle_doubled(symbol, [key for key, val in filtered_from_system.items() if val[:len(symbol)] == symbol])
                     match chosen_option:
+                        # If exit, exit
                         case "exit":
                             exit_signal = True
                             break
+                        # If invalid, skip and move on
                         case "invalid":
                             continue
+                        # If ignore, set previous_number_of_instances to 0 to continue.
                         case "ignore":
                             previous_number_of_instances = 0
-                            # So that the condition isn't met
-                            #   and it moves on to invalid symbol handling.
                             pass
+                        # Otherwise, add input (raw) to the list of tokens
                         case _:
                             input_translated_to_keys.append(chosen_option)
+                            # Shrink index distance to one and increment indices.
                             reset_index_distance()
                             increment_indices()
+                            # Move on
                             previous_number_of_instances = 0
                             continue
+                
+                # Now, handle the invalid value
                 match handle_invalid_value(symbol):
                     case "remove":
+                        # Prompt for input
                         remove_all_instances_choice = input("All instances? [N/y] > ")
-                        if len(remove_all_instances_choice) == 0 or remove_all_instances_choice.lower()[0] != "y":
+                        # > Strings are truthy, false only if completely empty. Shortened and clarified.
+                        # If user says yes
+                        if not remove_all_instances_choice or remove_all_instances_choice.lower()[0] != "y":
+                            # Remove only this instance
                             processed_user_input = processed_user_input.replace(symbol, "", 1)
                         else:
+                            # Otherwise, remove all instances
                             processed_user_input = processed_user_input.replace(symbol, "")
                         end_index = start_index + 1
                         continue
@@ -316,7 +364,7 @@ def translate(user_input, from_system, to_system):
                     case "ignore":
                         randomized_key = "".join(random.sample("0123456789abcdefghijklmnopkrstuvwxyz", k=16))
                         filtered_from_system.update({randomized_key: symbol})
-                        processed_to_system.update({randomized_key: symbol})
+                        flattened_to_system.update({randomized_key: symbol})
                         continue
                     case "exit":
                         exit_signal = True
@@ -362,7 +410,7 @@ def translate(user_input, from_system, to_system):
         if not previous_was_invalid:
             key = input_translated_to_keys[translation_index]
         try:
-            keys_translated_to_notation.append(processed_to_system[key])
+            keys_translated_to_notation.append(flattened_to_system[key])
             translation_index += 1
             previous_was_invalid = False
         except:
@@ -387,7 +435,7 @@ def translate(user_input, from_system, to_system):
                     else:
                         key = changed_key
                 case "assign":
-                    processed_to_system.update({key: f"{input(f"Assign a value to {key}: ")}"})
+                    flattened_to_system.update({key: f"{input(f"Assign a value to {key}: ")}"})
                 case "note":
                     change_all_instances_choice = input("All instances? [n/Y] > ")
                     if len(change_all_instances_choice) == 0 or change_all_instances_choice.lower()[0] != "n":
@@ -407,7 +455,7 @@ def translate(user_input, from_system, to_system):
             translated_notation = translated_notation[:-2]
     number_of_notes = 0
     for note_symbol in keys_translated_to_notation:
-        if note_symbol == processed_to_system["cadenceAndClarity/note"]:
+        if note_symbol == flattened_to_system["cadenceAndClarity/note"]:
             number_of_notes += 1
             translated_notation += f"\n{note_symbol}{input(f"Note {number_of_notes}: ")}"
     return translated_notation
