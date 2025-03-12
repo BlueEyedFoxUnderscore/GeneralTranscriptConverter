@@ -11,10 +11,6 @@ It can translate between:
 - [ ] **Unclarinote**
 - [ ] **Yiaknote**
 - [ ] **Multithread**
-- [ ]   *Basic Multithread*
-- [ ]   *Advanced TRs*
-- [ ]   *Exclusions/Shorthand*
-- [ ]   *Atomicization*
 
 It automatically handles shiftstones, regardless of system.
 Notes can be added individually. **Don't copy paste the notation with the notes. The script doesn't handle multi-line input** (yet),
@@ -27,3 +23,17 @@ You can copy and/or modify a .json file from `gtc/notation_systems/`. The script
 *Don't rename any keys. The script works by assigning the same key to different values.*
 Keys are the first words on each line, for the uninitiated.
 For further functionality, either modify this script and make a pull request or contact Oxity on Discord (.oxity).
+
+TODO:
+
+- [ ] **Insanity**
+- [ ]   *Base System*
+- [ ]   *Modifiers*
+- [ ]   *Movement*
+- [ ]   *Loops*
+- [ ]   *Flight*
+- [ ] **Multithread**
+- [ ]   *Basic Multithread*
+- [ ]   *Advanced TRs*
+- [ ]   *Exclusions/Shorthand*
+- [ ]   *Atomicization*
