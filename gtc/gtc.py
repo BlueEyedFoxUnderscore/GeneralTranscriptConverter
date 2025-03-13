@@ -9,7 +9,7 @@ from os import listdir
 from os.path import join, dirname, abspath
 from json import load
 from random import sample
-from typing import Optional, Any, Union, Callable
+from typing import Callable, TypeVar
 from sys import version_info, exit, stderr
 from re import sub, findall
 
@@ -20,9 +20,6 @@ if version_info < (3, 10):
     else:
         stderr.write("The GTC module requires Python 3.10 or higher.\n")
     exit(1)
-
-quit_words = ["exit", "close", "quit"]
-# You can quit the program at any time by typing one of these words.
 
 header = """
 ╔═══════════════════════════════════════════════════════╗
@@ -42,11 +39,14 @@ header = """
 quit_words = ["exit", "close", "quit"]
 # You can quit the program at any time by typing one of these words.
 
+# > Utility types
+T = TypeVar('T')
+PrintCallable = Callable[[str], None]
+
 # Functions starting with an underscore are used internally and not meant for module use.
-# 
-def _validate_argument_function(argument: Callable[..., Any],
-                              default: Callable[..., Any],
-                              *, print_error: Optional[Callable[[str], None]] = stderr.write):
+# > Added default value to parameter "default" because seeing stderr.write all over the place was getting old
+# > Changed parameter type restrictions to be consitent with Python 3.10
+def _validate_argument_function_(argument: Callable, default: Callable = stderr.write, *, print_error: PrintCallable | None = stderr.write) -> PrintCallable:
     # If print_error cannot be converted to callable, default to stderr.write
     if not callable(print_error):
         print_error = stderr.write
@@ -58,11 +58,16 @@ def _validate_argument_function(argument: Callable[..., Any],
     else:
         return argument
 
-def load_charts(folder_path: Optional[str] = None,
-                folder_name: Optional[str] = "notation_systems",
-                *, print_error: Optional[Callable[[str], None]] = stderr.write) -> list[dict[str, Any]]:
+# > Redefined to be inline.
+# > Changed parameter type restrictions to be consitent with Python 3.10
+def _validate_argument_function (argument: Callable, default: Callable = stderr.write, *, print_error: PrintCallable | None = stderr.write) -> None:
+    argument = _validate_argument_function_(argument, default, print_error)
+    
+
+# > Changed parameter type restrictions to be consitent with Python 3.10
+def load_charts(folder_path: str | None = None, folder_name: str | None = "notation_systems", *, print_error: PrintCallable | None = stderr.write) -> list[dict[str, any]]:
     # Validate our print error function
-    print_error = _validate_argument_function(print_error, stderr.write)
+    _validate_argument_function(print_error)
     
     # Start try
     try:
@@ -73,11 +78,9 @@ def load_charts(folder_path: Optional[str] = None,
         if folder_path == None:
             # Default folder_path to join(dirname(abspath(__file__ # this is our hashbang)), folder_name) -- this should be our file
             folder_path = join(dirname(abspath(__file__)), folder_name)
-
-            # Python doesn't allow using other parameters inside default parameters, so I have to do this instead.
+            # ^ Python doesn't allow using other parameters inside default parameters, so I have to do this instead. - Oxity
         
-        # Rectify folder_path to string
-        folder_path = str(folder_path)
+        # > Removed rectify as it is unnecessary
 
         # Initialize json_list
         json_list = []
@@ -90,7 +93,11 @@ def load_charts(folder_path: Optional[str] = None,
                 try:
                     # File path is join(jolder_path and file_name)
                     file_path = join(folder_path, file_name)
-                    with open(file_path, 'r', encoding='utf-8') as file:
+                    
+                    # Open file_path 
+                    # > Removed 'r' from open as that is a default value
+                    with open(file_path, encoding='utf-8') as file:
+                        # Append file to list
                         json_list.append(load(file))
                 except Exception as e:
                     print_error(f"Error reading {file_name}: {e}\n")
@@ -99,44 +106,66 @@ def load_charts(folder_path: Optional[str] = None,
         print_error(f"Error loading charts: {e}\n")
         exit(1)
 
-def find_key_by_value(system: dict[str, Any],
-                      value: Any,
-                      *, print_error: Optional[Callable[str, None]] = stderr.write) -> list[str]:
-    print_error = _validate_argument_function(print_error, stderr.write)
+# > Changed parameter type restrictions to be consitent with Python 3.10
+def find_key_by_value(system: dict[str, T], wanted_value: T, *, print_error: PrintCallable | None = stderr.write) -> list[str]:
+    # Validate print_error
+    _validate_argument_function(print_error)
+    
+    # If system isn't a dict, error "invalid system input."
     if type(system) != dict:
         print_error("Invalid system input.\n")
-        return []
-    return [key for key, val in system.items() if val == value]
+        # > Changed return [] to raise new TypeError since we should handle this if it ever comes up instead of ignoring it.
+        raise TypeError("Invalid system input.")
+    
+    # Return (key) for (key, val) in system.items() iff (value) == (what we're looking for) 
+    # > Renamed some variables for clarity.
+    return [key for key, value in system.items() if value == wanted_value]
 
-def input_valid_system(systems: list[dict[str, Any]],
-                       user_input: Optional[str] = None,
-                       *, print_error: Optional[Callable[str, None]] = stderr.write) -> Union[str, dict[str, Any]]:
+# > Changed parameter type restrictions to be consitent with Python 3.10
+def input_valid_system(systems: list[dict[str, any]], user_input: str | None = None, *, print_error: PrintCallable | None = stderr.write) -> str | dict[str, any]:
+    # Engage try to catch errors
     try:
-        print_error = _validate_argument_function(print_error, stderr.write)
+
+        # Validate argument function
+        _validate_argument_function(print_error)
+        
+        # Iff user_input is none
         if user_input == None:
+            # Prompt input
             user_input = input()
-        user_input = str(user_input)
+        
+        # > Removed rectify (user_input) as it is uneccessary
+        
+        # Iff user_input in quit_words
         if user_input in quit_words:
+            # Initiate exit
             return "exit"
+
+        # Initialize found_system
         found_system = None
-        for obj in systems:
-            if "name" in obj.keys():
-                for name in obj["name"]:
-                    if name == user_input:
-                        found_system = obj
+        
+        for obj in systems: 
+            if "name" in obj.keys(): 
+                for name in obj["name"]: 
+                    if name == user_input: found_system = obj
         if found_system:
             return found_system
         else:
             print_error("\nInvalid system.\n")
-            return "invalid"
+            # > Changed to None from "" to avoid edge case of system named "invalid"
+            return None
+    
     except Exception as e:
         print_error(f"Error validating system: {e}\n")
 
+# > Updated type restrictions to be consistent with Python 3.10
 def handle_invalid_value(symbol: str,
-                         user_input: Optional[str] = None,
-                         *, print_function: Optional[Callable[str, None]] = print) -> str:
+                         user_input: str | None = None,
+                         *, print_function: PrintCallable | None = print) -> str:
     print_function = _validate_argument_function(print_function, print)
     symbol = str(symbol)
+
+    # If we don't have user input, prompt for it
     if user_input == None:
         user_input = input(f'''
     "{symbol}" is not a valid value in the input system. How would you like to handle it?
@@ -146,36 +175,47 @@ def handle_invalid_value(symbol: str,
     (4) Turn it into a note.
     (5) Include the next # characters and ask again.
     (6) Ignore it.\n\n    > ''')
-    user_input = str(user_input)
+    
+    # > Removed input rectifier, doesn't need to be here
+
     if user_input in quit_words:
         return "exit"
-    match user_input:
-        case "1":
+    
+    # > Added full-string equivalents and lowercased input string
+    match user_input.lower():
+        case "1"|"remove":
             return "remove"
-        case "2":
+        case "2"|"change":
             return "change"
-        case "3":
+        case "3"|"assign":
             return "assign"
-        case "4":
+        case "4"|"note":
             return "note"
-        case "5":
+        case "5"|"include":
             return "include"
-        case "6":
+        case "6"|"ignore":
             return "ignore"
         case _:
             print_function("\nInvalid option.\n")
             return "invalid"
-        # Man I love pattern matching.
+        # - Man I love pattern matching. - Oxity
+        # - You know OR statements are applicable for these, right? Just curious. - BlueEyedFox_
 
-def handle_doubled(symbol: str,
-                   keys: list[str],
-                   user_input: Optional[str] = None,
-                   *, print_function: Optional[Callable[str, None]] = print) -> str:
-    print_function = _validate_argument_function(print_function, print)
+# > Updated type restrictions to be consistent with Python 3.10
+def handle_doubled(symbol: str, keys: list[str], user_input: str | None = None, *, print_function: PrintCallable | None = print) -> str:
+    # Validate error function
+    _validate_argument_function(print_function, print)
+
+    # Initialize options
     options = ""
+
+    # Iterate over keys
     for key in keys:
+        # Add each possible option
         options += f"({keys.index(key) + 1}) {key}\n    "
-    symbol = str(symbol)
+    
+    # > Removed rectify for symbol, not needed
+
     if user_input == None:
         user_input = input(f'''
     "{symbol}" belongs to multiple keys.
@@ -193,13 +233,16 @@ def handle_doubled(symbol: str,
                 return keys[abs(int(user_input)) - 1]
     except:
         print_function("\nInvalid option.\n")
-        return "invalid"
+        # > Changed to return None to handle edge case of there being a token named "invalid"
+        return None
 
-def handle_invalid_key(key: str,
-                       user_input: Optional[str] = None,
-                       *, print_function: Optional[Callable[str, None]] = print) -> str:
-    print_function = _validate_argument_function(print_function, print)
-    key = str(key)
+# > Updated type restrictions to be consistent with Python 3.10
+def handle_invalid_key(key: str, user_input: str | None = None, *, print_function: PrintCallable | None = print) -> str:
+    _validate_argument_function(print_function, print)
+    
+    # > Removed rectify (key), unecessary
+
+    # If (user input) doesn't exist, get new user input
     if user_input == None:
         user_input = input(f'''
     "{key}" doesn't have a value in the print_function system. How would you like to handle it?
@@ -207,7 +250,9 @@ def handle_invalid_key(key: str,
     (2) Change it.
     (3) Assign a value to it.
     (4) Turn it into a note.\n\n    > ''')
-    user_input = str(user_input)
+    
+    # > Removed rectify (user_input), unnecessary
+
     if user_input in quit_words:
         return "exit"
     match user_input:
@@ -223,30 +268,37 @@ def handle_invalid_key(key: str,
             print_function("\nInvalid option.\n")
             return "invalid"
 
-def process_system(system: dict[str, Any],
-                   *, print_error: Optional[Callable[str, None]] = stderr.write,
-                   excluded_objects: Optional[list[str]] = ["notes"]) -> dict[str, Any]:
-    # Removes every value from a system that isn't a dict, and merges the parent and child keys of each element in each dict.
-    # {"structures": {"cube": "c"}} turns to {"structures/cube": "c"}
-    print_error = _validate_argument_function(print_error, stderr.write)
-    if type(system) != dict:
-        print_error("Invalid system input.\n")
-        return {}
-    if type(excluded_objects) != list:
-        print_error('Invalid excluded_dicts argument. Defaulting to ["notes"].\n')
-    processed_system = {}
+# > Changed name to be more descriptive
+# > Updated type restrictions to be consistent with Python 3.10
+def flatten_system(system: dict[str, any],
+                   *,
+                   print_error: PrintCallable | None = stderr.write,
+                   excluded_objects: list[str] | None = ["notes"]) -> dict[str, any]:
+    # Changed to docstring
+    """Removes every value from a system that isn't a dict, and merges the parent and child keys of each element in each dict. \n
+    In English, this flattens the system - BlueEyedFox\_ \n
+    Ex. {"structures": {"cube": "c"}} turns into {"structures/cube": "c"}"""
+
+    _validate_argument_function(print_error, stderr.write)
+
+    # > REMOVED RECTIFICATION STATEMENTS AS THEY WERE NOT NEEDED
+    # > THESE ARE ALREADY TYPESAFE GODDAMNIT
+
+    # Initialized flattened_system
+    # > Changed from flattened
+    flattened_system = {}
     for obj in list(system.values()):
         if find_key_by_value(system, obj, print_error=print_error)[0] not in excluded_objects:
             if type(obj) == dict:
                 for child_key in list(obj.keys()):
                     parent_key = find_key_by_value(system, obj)[0]
                     processed_key = f"{parent_key}/{child_key}"
-                    processed_system.update({processed_key: obj[child_key]})
-    return processed_system
+                    flattened_system.update({processed_key: obj[child_key]})
+    return flattened_system
 
-def extract_bools(system: dict[str, Any],
-                *, print_error: Optional[Callable[str, None]] = stderr.write) -> dict[str, bool]:
-    print_error = _validate_argument_function(print_error, stderr.write)
+# > Updated type restrictions to be consistent with Python 3.10
+def extract_bools(system: dict[str, any], *, print_error: PrintCallable | any = stderr.write) -> dict[str, bool]:
+    _validate_argument_function(print_error, stderr.write)
     if type(system) != dict:
         print_error("Invalid system input.\n")
         return {}
@@ -256,13 +308,12 @@ def extract_bools(system: dict[str, Any],
             system_bools.update({bools: system[bools]})
     return system_bools
 
-def create_insert_tokens(system: dict[str, Any],
-                         *, print_error: Optional[Callable[str, None]] = stderr.write) -> dict[str, str]:
+# > Updated type restrictions to be consistent with Python 3.10
+def create_insert_tokens(system: dict[str, any],
+                         *, print_error: PrintCallable | None = stderr.write) -> dict[str, str]:
     print_error = _validate_argument_function(print_error, stderr.write)
     try:
-        if type(system) != dict:
-            print_error("Invalid system input.\n")
-            return {}
+        # > 𝗜𝗧'𝗦 𝗔𝗟𝗥𝗘𝗔𝗗𝗬 𝗧𝗬𝗣𝗘𝗦𝗔𝗙𝗘 𝟬𝗫𝗜𝗧𝗬 𝗬𝗢𝗨 𝗗𝗢𝗡'𝗧 𝗡𝗘𝗘𝗗 𝗧𝗢 𝗥𝗘𝗖𝗧𝗜𝗙𝗬 𝗜𝗧
         regex_special_chars = ['\\', '.', '[', ']', '{', '}', '(', ')', '<', '>', '*', '+', '-', '=', '!', '?', '^', '$', '|']
         # RegEx special characters that need to be escaped
         values_of = {obj: "".join(system[obj].values()) for obj in system.keys() if type(system[obj]) == dict}
@@ -315,22 +366,50 @@ def create_insert_tokens(system: dict[str, Any],
     except Exception as e:
         raise e
 
+# > Updated type restrictions to be consistent with Python 3.10
 def translate(user_input: str,
-              input_system: dict[str, Any],
-              output_system: dict[str, Any],
-              *, get_input: Optional[Callable[str, str]] = input,
-              print_function: Optional[Callable[str, None]] = print, 
-              print_error: Optional[Callable[str, None]] = stderr.write) -> str:
+              input_system: dict[str, any],
+              output_system: dict[str, any],
+              *, get_input: Callable[[str], str] | None = input,
+              print_function: PrintCallable | None = print, 
+              print_error: PrintCallable | None = stderr.write) -> str:
     # TODO: fill in insanity.json
-    print_error = _validate_argument_function(print_error, stderr.write)
-    if type(input_system) != dict or type(output_system) != dict:
-        print_error("Invalid system input. Something isn't a python dictionary.\n")
-        return ""
-    get_input = _validate_argument_function(get_input, input, print_error = print_error)
-    print_function = _validate_argument_function(print_function, print, print_error = print_error)
-    user_input = str(user_input)
+    _validate_argument_function(print_error, stderr.write)
+    
+    # > 𝙄𝙏'𝙎 𝘼𝙇𝙍𝙀𝘼𝘿𝙔 𝙏𝙔𝙋𝙀𝙎𝘼𝙁𝙀 𝙊𝙓𝙄𝙏𝙔 𝙄𝙎𝙏𝙂
+
+    _validate_argument_function(get_input, input, print_error = print_error)
+    _validate_argument_function(print_function, print, print_error = print_error)
+    
+    # > already typesafe
+
+    # Initialize variables
     start_index = 0
     end_index = 1
+
+    processed_input = user_input
+
+    # Flatten input and output systems
+    # > Renamed variables for clarity
+    flattened_input_system  = flatten_system(input_system)
+    flattened_output_system = flatten_system(output_system)
+
+    # Initialize variables
+    previous_instances_count = 0
+    input_translated_to_tokens: list[str] = []
+
+    symbols_to_ignore = {}
+    exit_signal = False
+
+    # ? Unused. Are they needed for a later version?
+    input_system_bools = extract_bools(input_system)
+    output_system_bools = extract_bools(output_system)
+
+    input_system_note_symbol = flattened_input_system["cadence and clarity/note"]
+    finished_notation = ""
+
+    # > Moved for consistency
+    # Define helper functions
     def increment_indices():
         nonlocal start_index, end_index
         start_index += 1
@@ -338,51 +417,42 @@ def translate(user_input: str,
     def reset_index_distance():
         nonlocal start_index, end_index
         start_index = end_index - 1
-    def filter_system_for_shiftstones(system):
+
+    # Remove space before shiftstones/remove shiftstones if not used
+    def filter_system_for_shiftstones(system: dict[str, any]):
         nonlocal shiftstoning
         filtered_system = system.copy()
         for key in system.keys():
-            if shiftstoning:
-                if key[:12] != "shiftstones/" and key != "cadence and clarity/note":
-                    filtered_system.pop(key)
-            else:
-                if key[:12] == "shiftstones/":
-                    filtered_system.pop(key)
+            
+            # > Flattened to equivalent logical statement
+
+            if shiftstoning and key[:12] != "shiftstones/" and key != "cadence and clarity/note" or key[:12] == "shiftstones/": filtered_system.pop(key)
         return filtered_system
-    processed_input = user_input
-    processed_input_system = process_system(input_system)
-    processed_output_system = process_system(output_system)
-    previous_instances_count = 0
-    input_translated_to_keys = []
-    def append_to_keys(key):
-        nonlocal input_translated_to_keys, previous_instances_count
-        input_translated_to_keys.append(key)
+    
+    def append_to_keys(key: str):
+        nonlocal input_translated_to_tokens, previous_instances_count
+        input_translated_to_tokens.append(key)
         previous_instances_count = 1
         reset_index_distance()
         increment_indices()
-    symbols_to_ignore = {}
-    exit_signal = False
-    input_system_bools = extract_bools(input_system)
-    output_system_bools = extract_bools(output_system)
-    input_system_note_symbol = processed_input_system["cadence and clarity/note"]
-    finished_notation = ""
+
     for line in processed_input.rstrip("\r\n").splitlines():
-        if line == {processed_input_system["cadence and clarity/space"]}:
-            finished_notation += f"{processed_output_system["cadence and clarity/space"]}\n"
+        if line == {flattened_input_system["cadence and clarity/space"]}:
+            finished_notation += f"{flattened_output_system["cadence and clarity/space"]}\n"
             continue
             # I genuinely have no idea why, but without this, lines with only a space are skipped.
         start_index = 0
         end_index = 1
-        input_translated_to_keys = []
+        input_translated_to_tokens = []
         notes = []
         symbols_to_notes = {}
         if line[:len(input_system_note_symbol)] == input_system_note_symbol and processed_input.rstrip("\r\n").splitlines().index(line) != 0:
             # TODO: add case for note to symbol
-            finished_notation += f"{processed_output_system["cadence and clarity/note"]}{line[len(input_system_note_symbol):]}\n"
+            finished_notation += f"{flattened_output_system["cadence and clarity/note"]}{line[len(input_system_note_symbol):]}\n"
             continue
         else:
             shiftstoning = False
-            if processed_input_system["shiftstones/delimiter"] in line[1:3]:
+            if flattened_input_system["shiftstones/delimiter"] in line[1:3]:
                 shiftstoning = True
             while start_index < len(line) and end_index < len(line) + 1:
                 # TODO: code logic for the system bools
@@ -391,9 +461,9 @@ def translate(user_input: str,
                     notes.append(symbols_to_notes[symbol])
                     append_to_keys("cadence and clarity/note")
                     continue
-                filtered_input_system = filter_system_for_shiftstones(processed_input_system)
+                filtered_input_system = filter_system_for_shiftstones(flattened_input_system)
                 filtered_input_system.update(symbols_to_ignore)
-                if symbol == processed_input_system["shiftstones/delimiter"]:
+                if symbol == flattened_input_system["shiftstones/delimiter"]:
                     shiftstoning = False
                 match len(symbol_instances := [instance for instance in list(filtered_input_system.values()) if instance[:len(symbol)] == symbol]):
                     case 0:
@@ -470,7 +540,7 @@ def translate(user_input: str,
                             case "ignore":
                                 randomized_key = "".join(sample("0123456789abcdefghijklmnopkrstuvwxyz", k=16))
                                 symbols_to_ignore.update({randomized_key: symbol})
-                                processed_output_system.update({randomized_key: symbol})
+                                flattened_output_system.update({randomized_key: symbol})
                             case "invalid":
                                 pass
                         continue
@@ -512,18 +582,18 @@ def translate(user_input: str,
             previous_was_invalid = False
             invalid_keys_to_notes = {}
             keys_translated_to_notation = []
-            while translation_index < len(input_translated_to_keys):
+            while translation_index < len(input_translated_to_tokens):
                 # TODO: code logic for insert tokens
                 try:
                     if not previous_was_invalid:
-                        key = input_translated_to_keys[translation_index]
-                    keys_translated_to_notation.append(processed_output_system[key])
+                        key = input_translated_to_tokens[translation_index]
+                    keys_translated_to_notation.append(flattened_output_system[key])
                     translation_index += 1
                     previous_was_invalid = False
                 except:
                     if key in list(invalid_keys_to_notes.keys()):
                         notes.append(invalid_keys_to_notes[key])
-                        keys_translated_to_notation.append(processed_output_system["cadence and clarity/note"])
+                        keys_translated_to_notation.append(flattened_output_system["cadence and clarity/note"])
                         translation_index += 1
                         continue
                     print_function(f"Here is the currently translated portion of the notation:\n{"".join(keys_translated_to_notation)}")
@@ -532,7 +602,7 @@ def translate(user_input: str,
                             print_function("All instances? [n/Y]")
                             change_all_instances_choice = get_input()
                             if len(change_all_instances_choice) == 0 or change_all_instances_choice.lower()[0] != "n":
-                                input_translated_to_keys = [instance for instance in input_translated_to_keys if instance != key]
+                                input_translated_to_tokens = [instance for instance in input_translated_to_tokens if instance != key]
                             else:
                                 translation_index += 1
                         case "change":
@@ -542,14 +612,14 @@ def translate(user_input: str,
                             print_function("All instances? [n/Y]")
                             change_all_instances_choice = get_input()
                             if len(change_all_instances_choice) == 0 or change_all_instances_choice.lower()[0] != "n":
-                                input_translated_to_keys = [changed_key if x == key else x for x in input_translated_to_keys]
+                                input_translated_to_tokens = [changed_key if x == key else x for x in input_translated_to_tokens]
                                 previous_was_invalid = False
                                 continue
                             else:
                                 key = changed_key
                         case "assign":
                             print_function(f"Assign a value to {key}:")
-                            processed_output_system.update({key: get_input()})
+                            flattened_output_system.update({key: get_input()})
                         case "note":
                             print_function("All instances? [n/Y]")
                             change_all_instances_choice = get_input()
@@ -570,13 +640,13 @@ def translate(user_input: str,
                 break
             translated_notation = "".join(keys_translated_to_notation) + "\n"
             if output_system["name"][0] == "text":
-                is_in_listed_object = any(input_translated_to_keys[-1].startswith(obj) for obj in ["modifiers/", "states/"])
-                is_not_listed_symbol = any(input_translated_to_keys[-1] != element for element in ["cadence and clarity/note"])
+                is_in_listed_object = any(input_translated_to_tokens[-1].startswith(obj) for obj in ["modifiers/", "states/"])
+                is_not_listed_symbol = any(input_translated_to_tokens[-1] != element for element in ["cadence and clarity/note"])
                 if is_in_listed_object and is_not_listed_symbol:
                     translated_notation = translated_notation[:-2]
             finished_notation += translated_notation
             for note in notes:
-                finished_notation += f"{processed_output_system["cadence and clarity/note"]}{note}\n"
+                finished_notation += f"{flattened_output_system["cadence and clarity/note"]}{note}\n"
             continue
     if exit_signal:
         return ""
