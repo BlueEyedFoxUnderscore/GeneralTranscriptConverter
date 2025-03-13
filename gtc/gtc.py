@@ -12,6 +12,7 @@ from random import sample
 from typing import Callable, TypeVar
 from sys import version_info, exit, stderr
 from re import sub, findall
+import uuid
 
 
 if version_info < (3, 10):
@@ -31,7 +32,7 @@ header = """
 ║     `'*'`               `                  ``         ║
 ║ G E N E R A L  T R A N S C R I P T  C O N V E R T E R ║
 ╚═════╤═══════════════════════════════════════════╤═════╝
-      │  Made by 0xity (mostly) and BlueEyedFox_  │      
+      │  Made by 0xity (mostly) and @BlueEyedFoxUnderscore  │      
       └───────────────────────────────────────────┘
     
 """
@@ -78,7 +79,7 @@ def load_charts(folder_path: str | None = None, folder_name: str | None = "notat
         if folder_path == None:
             # Default folder_path to join(dirname(abspath(__file__ # this is our hashbang)), folder_name) -- this should be our file
             folder_path = join(dirname(abspath(__file__)), folder_name)
-            # ^ Python doesn't allow using other parameters inside default parameters, so I have to do this instead. - Oxity
+            # ^ Python doesn't allow using other parameters inside default parameters, so I have to do this instead. - @0xity
         
         # > Removed rectify as it is unnecessary
 
@@ -198,8 +199,8 @@ def handle_invalid_value(token: str,
         case _:
             print_function("\nInvalid option.\n")
             return "invalid"
-        # - Man I love pattern matching. - Oxity
-        # - You know OR statements are applicable for these, right? Just curious. - BlueEyedFox_
+        # - Man I love pattern matching. - @0xity
+        # - You know OR statements are applicable for these, right? Just curious. - @BlueEyedFoxUnderscore
 
 # > Updated type restrictions to be consistent with Python 3.10
 def handle_doubled(token: str, keys: list[str], user_input: str | None = None, *, print_function: PrintCallable | None = print) -> str:
@@ -310,6 +311,7 @@ def extract_bools(system: dict[str, any], *, print_error: PrintCallable | any = 
 
 # > Updated type restrictions to be consistent with Python 3.10
 # ? Unused function: specify?
+# TODO Comment this function
 def create_insert_tokens(system: dict[str, any],
                          *, print_error: PrintCallable | None = stderr.write) -> dict[str, str]:
     print_error = _validate_argument_function(print_error, stderr.write)
@@ -430,7 +432,7 @@ def translate(user_input: str,
             if shiftstoning and key[:12] != "shiftstones/" and key != "cadence and clarity/note" or key[:12] == "shiftstones/": filtered_system.pop(key)
         return filtered_system
     
-    def append_to_keys(key: str):
+    def append_to_tokens(key: str):
         nonlocal input_translated_to_tokens, previous_possible_token_count
         input_translated_to_tokens.append(key)
         previous_possible_token_count = 1
@@ -441,8 +443,8 @@ def translate(user_input: str,
         if current_line == {flattened_input_system["cadence and clarity/space"]}:
             finished_notation += f"{flattened_output_system["cadence and clarity/space"]}\n"
             continue
-            # - I genuinely have no idea why, but without this, lines with only a space are skipped. - Oxity
-            # - Amazing. The true programmer mindset. I think it's because of the next line - if it only has a space, it throws and continues - BlueEyedFox_
+            # - I genuinely have no idea why, but without this, lines with only a space are skipped. - @0xity
+            # - Amazing. The true programmer mindset. I think it's because of the next line - if it only has a space, it throws and continues - @BlueEyedFoxUnderscore
         
         # Initialize single-line variables
         start_index = 0
@@ -474,7 +476,7 @@ def translate(user_input: str,
                 # If token is in tokens only used in notes, append the ID of the token and then the note token.
                 if token in tokens_to_notes:
                     notes.append(tokens_to_notes[token])
-                    append_to_keys("cadence and clarity/note")
+                    append_to_tokens("cadence and clarity/note")
                     continue
 
                 # Get all possible shiftstones
@@ -486,6 +488,9 @@ def translate(user_input: str,
                 if token == flattened_input_system["shiftstones/delimiter"]:
                     shiftstoning = False
                 
+                # Typedef possible_tokens
+                possible_tokens: list[str]
+
                 # Match our token cases
                 match len(possible_tokens := [instance for instance in list(stones_input_system.values()) if instance[:len(token)] == token]):
 
@@ -513,10 +518,10 @@ def translate(user_input: str,
                                     end_index +=1
                                 case "invalid":
                                     pass 
-                                    # - Normally I'd put "continue" here, but it does that anyway after every case. - Oxity
+                                    # - Normally I'd put "continue" here, but it does that anyway after every case. - @0xity
                                 case _:
                                     # Append dynamic option to keys
-                                    append_to_keys(chosen_option)
+                                    append_to_tokens(chosen_option)
                             continue
                         
                         # If there were no previous tokens, we have to handle it as invalid
@@ -589,7 +594,7 @@ def translate(user_input: str,
                                 
                                 # Add key to dictionary
                                 stones_input_system.update({assigned_full_key: token})
-                                append_to_keys(assigned_full_key)
+                                append_to_tokens(assigned_full_key)
 
                             case "note":
                                 # > Added functionality for note confirmation.
@@ -613,57 +618,96 @@ def translate(user_input: str,
                                         if(is_correct.lower() == "y"):
                                             break
                                     
-                                    # > Removed len clause (see privious at line 533)
+                                    # > Removed len clause (see previous at line 533)
                                     if change_all_instances_choice.lower()[0] != "n":
                                         tokens_to_notes.update({token: note_contents})
                                 notes.append(note_contents)
-                                append_to_keys("cadence and clarity/note")
-
+                                append_to_tokens("cadence and clarity/note")
+                            
                             case "include":
-                                try:
-                                    print_function("Number of charaters to insert:")
-                                    characters_to_insert = int(get_input())
-                                    if characters_to_insert > len(current_line[end_index:]):
-                                        characters_to_insert = len(current_line[end_index:])
-                                    if characters_to_insert <= -len(token):
-                                        characters_to_insert = -len(token) + 1
-                                    end_index += characters_to_insert
-                                except:
-                                    print_function("Invalid number.")
+                                while(True):
+                                    try:
+                                        while(True):
+                                            # Print and prompt for number of characters to insert
+                                            print_function("Number of charaters to insert:")
+                                            characters_to_insert = int(get_input())
+
+                                            if characters_to_insert > len(current_line[end_index:]):
+                                                print_function(f"Number of characters is greater than remaining length {len(current_line[end_index:])}. Override? [y/N] \n> ")
+                                                if input().lower() == "y": characters_to_insert = len(current_line[end_index:])
+                                                else: continue
+                                            
+                                            if characters_to_insert <= -len(token):
+                                                print_function("Number of characters is less than current symbol. Override? [y/N] \n> ")
+                                                if input().lower() == "y": characters_to_insert = -len(token) + 1
+                                                else: continue
+                                            break
+
+                                        # Advance by the chosen number of characters.
+                                        end_index += characters_to_insert
+
+                                        break
+                                    except ValueError:
+                                        print_function(f"Invalid number. (actual exception: {e})")
                             case "ignore":
-                                randomized_key = "".join(sample("0123456789abcdefghijklmnopkrstuvwxyz", k=16))
+                                
+                                # > Changed to uuid. Also added key header. There is now absolutely no chance of conflicts.
+                                # Generate randomized key from UUID
+                                randomized_key = "randomized_key_".join(str(uuid.uuid4()))
+
+                                # Add to token dictionaries
                                 tokens_to_ignore.update({randomized_key: token})
                                 flattened_output_system.update({randomized_key: token})
                             case "invalid":
                                 pass
                         continue
+
+                    # If there's only one possible token (preferable)
                     case 1:
+                        # If our token isn't filled yet (shorter than selected token length)
+                        # TODO Optimize through dynamic offset - @BlueEyedFoxUnderscore
                         if token != possible_tokens[0]:
+                            # If we aren't at the end
                             if end_index != len(current_line):
+                                # Set previous_possible_token_count 
                                 previous_possible_token_count = 1
                                 end_index += 1
                                 continue
+
+                            # Otherwise set the possible tokens to none (symbol was invalid or a terminator value)
+                            # ! Should use invalid token handling instead of just skipping (possibly new function for sheared tokens)
                             previous_possible_token_count = 0
                             continue
-                        append_to_keys(find_key_by_value(stones_input_system, token)[0])
+                        # Otherwise, append the fit token to the list
+                        append_to_tokens(find_key_by_value(stones_input_system, token)[0])
                         continue
+                    
+                    # If there's more than one possible token
                     case _:
+                        # If we're at the end of this line
                         if end_index == len(current_line):
+                            # If we have a shiftstone token and its length is one
                             if len(find_key_by_value(stones_input_system, token)) == 1:
-                                append_to_keys(find_key_by_value(stones_input_system, token)[0])
+                                # Append the first shifstone token
+                                append_to_tokens(find_key_by_value(stones_input_system, token)[0])
                                 continue
+                            # Handle a doubled token
                             chosen_option = handle_doubled(token, find_key_by_value(stones_input_system, token))
+
+                            # Match our doubled token to the chosen option
                             match chosen_option:
                                 case "exit":
                                     exit_signal = True
                                     break
                                 case "ignore":
+                                    # Continue and ignore this token
                                     previous_possible_token_count = len(possible_tokens)
                                 case "invalid":
                                     pass
                                 case _:
-                                    append_to_keys(chosen_option)
+                                    append_to_tokens(chosen_option)
                             continue
+                        # Set our previous possible token count to what it's supposed to be
                         previous_possible_token_count = len(possible_tokens)
                         end_index += 1
                         continue
@@ -671,6 +715,8 @@ def translate(user_input: str,
                     break
             if exit_signal:
                 break
+
+            # Initialize our loop varaibles
             translation_index = 0
             previous_was_invalid = False
             invalid_keys_to_notes = {}
@@ -678,49 +724,80 @@ def translate(user_input: str,
             while translation_index < len(input_translated_to_tokens):
                 # TODO: code logic for insert tokens
                 try:
+                    # If our last token wasn't invalid
                     if not previous_was_invalid:
+                        # Translate it to tokens
                         key = input_translated_to_tokens[translation_index]
+                    
+                    # Append this to our final list
                     keys_translated_to_notation.append(flattened_output_system[key])
+
+                    # Go forward one token
                     translation_index += 1
                     previous_was_invalid = False
                 except:
+                    # If our last token doesn't exist in our token list but it was in notes, append it as a note
                     if key in list(invalid_keys_to_notes.keys()):
                         notes.append(invalid_keys_to_notes[key])
                         keys_translated_to_notation.append(flattened_output_system["cadence and clarity/note"])
+
+                        # Continue to next
                         translation_index += 1
                         continue
+                    
+                    # Alert user to the problem
                     print_function(f"Here is the currently translated portion of the notation:\n{"".join(keys_translated_to_notation)}")
                     match handle_invalid_key(key, print_function = print_function):
                         case "remove":
+
+                            # Prompt to remove all
                             print_function("All instances? [n/Y]")
-                            change_all_instances_choice = get_input()
-                            if len(change_all_instances_choice) == 0 or change_all_instances_choice.lower()[0] != "n":
+                            change_all_instances_choice = str(get_input())
+
+                            # > Removed len clause
+                            if change_all_instances_choice.lower()[0] != "n":
                                 input_translated_to_tokens = [instance for instance in input_translated_to_tokens if instance != key]
                             else:
+                                # We don't need to actually remove it, we can just skip it
                                 translation_index += 1
                         case "change":
+
+                            # Mark the token as invalid
                             previous_was_invalid = True
+
+                            # Prompt for valid key
                             print_function(f"Change {key} to:")
                             changed_key = get_input()
+
+                            # Prompt for all instances
                             print_function("All instances? [n/Y]")
-                            change_all_instances_choice = get_input()
-                            if len(change_all_instances_choice) == 0 or change_all_instances_choice.lower()[0] != "n":
+                            change_all_instances_choice = str(get_input())
+
+                            # > Removed len clause
+                            if change_all_instances_choice.lower()[0] != "n":
+                                # Change all
                                 input_translated_to_tokens = [changed_key if x == key else x for x in input_translated_to_tokens]
                                 previous_was_invalid = False
                                 continue
                             else:
+                                # Change only this key
                                 key = changed_key
                         case "assign":
+                            # Self-explanatory
                             print_function(f"Assign a value to {key}:")
                             flattened_output_system.update({key: get_input()})
                         case "note":
+                            # Prompt user for if we should replace all instances
                             print_function("All instances? [n/Y]")
                             change_all_instances_choice = get_input()
                             print_function("Type note contents.\nTo fall back to key name, enter an empty note.")
                             note_contents = get_input()
+                            # If the note is none
                             if note_contents == "":
+                                # Get first note
                                 note_contents = key[key.find("/") + 1:]
-                            if len(change_all_instances_choice) == 0 or change_all_instances_choice.lower()[0] != "n":
+                            # > Removed len clause 
+                            if change_all_instances_choice.lower()[0] != "n":
                                 invalid_keys_to_notes.update({key: note_contents})
                             else:
                                 key = "cadence and clarity/note"
@@ -731,7 +808,11 @@ def translate(user_input: str,
                             break
             if exit_signal:
                 break
+
+            # Create final translated_notation string
             translated_notation = "".join(keys_translated_to_notation) + "\n"
+
+            # Special parsing for "text" (human-readable) notation
             if output_system["name"][0] == "text":
                 is_in_listed_object = any(input_translated_to_tokens[-1].startswith(obj) for obj in ["modifiers/", "states/"])
                 is_not_listed_token = any(input_translated_to_tokens[-1] != element for element in ["cadence and clarity/note"])
